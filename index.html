@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>poste.ar · Red social anónima y cifrada · Ciudadela, Buenos Aires</title>
+    <meta name="description" content="Red social anónima con identidad persistente. Sin registro, sin teléfono, sin email. Mensajes cifrados AES-256 desde el navegador. Todo se borra cada lunes. Ciudadela, Buenos Aires, Argentina.">
+    <meta name="keywords" content="red social anónima, red social encriptada, red social cifrada, mensajes anónimos, chat anónimo, mensajes cifrados, AES-256, privacidad, sin registro, efímero, postear anónimo, poste.ar, Ciudadela, Buenos Aires, Argentina, comunicación privada, red social criptográfica, chat privado sin cuenta">
+    <meta name="author" content="poste.ar">
+    <meta name="robots" content="index, follow">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://poste.ar/">
+    <meta property="og:title" content="poste.ar · Red social anónima y cifrada">
+    <meta property="og:description" content="Sin registro, sin teléfono, sin email. Publicá de forma anónima. Mensajes cifrados AES-256 invisibles al timeline público. Todo se borra cada lunes. Ciudadela, Buenos Aires.">
+    <meta property="og:image" content="https://poste.ar/postear.gif">
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:url" content="https://poste.ar/">
+    <meta property="twitter:title" content="poste.ar · Red social anónima y cifrada">
+    <meta property="twitter:description" content="Sin registro, sin teléfono, sin email. Mensajes cifrados AES-256 desde el navegador. Todo se borra cada lunes.">
+    <meta property="twitter:image" content="https://poste.ar/postear.gif">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "poste.ar",
+      "url": "https://poste.ar",
+      "description": "Red social anónima con identidad persistente y mensajes cifrados AES-256. Sin registro, sin teléfono, sin email. Todo se borra cada lunes.",
+      "applicationCategory": "SocialNetworkingApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "ARS"
+      },
+      "featureList": [
+        "Anonimato sin registro",
+        "Mensajes cifrados AES-256",
+        "Sin almacenamiento de IP",
+        "Identidad persistente por palabras clave",
+        "Timeline efímero semanal",
+        "Chat grupal cifrado invisible"
+      ],
+      "inLanguage": "es",
+      "locationCreated": {
+        "@type": "Place",
+        "name": "Ciudadela, Buenos Aires, Argentina"
+      }
+    }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <link rel="stylesheet" id="theme-stylesheet" href="themes/default.css">
+    <style>
+        .header-profile { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px; }
+        .header-profile img { width: 60px; height: 60px; flex-shrink: 0; }
+        .header-profile-info { flex: 1; }
+        .button-container { display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; }
+        .button-group { display: flex; gap: 10px; }
+        @media (hover: hover) {
+            .btn:hover, .btn-volver:hover {
+                background: rgba(0, 0, 0, 0.05) !important;
+                transition: background 0.2s ease;
+            }
+            body.modo-noche .btn:hover,
+            body.modo-noche .btn-volver:hover {
+                background: rgba(255, 255, 255, 0.08) !important;
+            }
+            .btn-postear:hover {
+                filter: brightness(1.1);
+                transition: filter 0.2s ease;
+            }
+            body.modo-noche .btn-postear:hover {
+                background: rgba(128, 128, 128, 0.3) !important;
+                filter: none;
+            }
+        }
+        .editor-section { margin-top: 20px; }
+        .checkbox-label { cursor: pointer; font-size: 15px; }
+        .checkbox-container { margin-top: 10px; }
+        .password-section { margin-top: 10px; }
+        .password-label { font-size: 15px; color: var(--color-secundario); margin-bottom: 5px; }
+        .password-hint { font-size: 13px; color: var(--color-terciario); margin-top: 5px; }
+        .bottom-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; gap: 10px; }
+        .hidden { display: none !important; }
+        .mensaje-oculto-item { border-left: 11px solid; padding-left: 8px; margin-top: 8px; padding-top: 6px; padding-bottom: 6px; }
+        .mensaje-oculto-item:not(:last-child) { border-bottom: 1px solid rgba(128, 128, 128, 0.15); padding-bottom: 8px; }
+        .mensaje-oculto-etiqueta { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .mensaje-oculto-texto { font-size: 14px; line-height: 1.4; }
+        .login-section { padding: 0; background: transparent; margin-bottom: 20px; }
+        .login-input { width: 100%; padding: 10px; font-size: 15px; border: 1px solid #d0d0d0; border-radius: 0; margin-bottom: 10px; background: var(--color-fondo); color: var(--color-principal); box-sizing: border-box; }
+        .login-input:focus { outline: none; border: 1px solid #d0d0d0; background: rgba(0,0,0,0.02); }
+        body.modo-noche .login-input:focus { background: rgba(255,255,255,0.02); }
+        .login-input::placeholder { color: var(--color-terciario); opacity: 0.6; }
+        .login-hint { font-size: 13px; color: var(--color-terciario); margin-bottom: 10px; line-height: 1.5; background: #f5f5f5; padding: 12px; border: 1px solid #e0e0e0; }
+        body.modo-noche .login-hint { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+        .login-error { font-size: 13px; color: #dc3545; background: rgba(220, 53, 69, 0.1); padding: 10px; margin-bottom: 10px; border: 1px solid rgba(220, 53, 69, 0.3); border-radius: 4px; }
+        .login-checkboxes { display: flex; gap: 20px; margin-bottom: 10px; }
+        .login-checkbox-label { font-size: 14px; color: var(--color-principal); cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .login-checkbox-label input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+        .login-usuario-guardado { font-size: 13px; color: var(--color-secundario); background: #f5f5f5; padding: 8px; margin-bottom: 10px; border: 1px solid #e0e0e0; border-radius: 4px; }
+        .login-usuario-guardado span { color: var(--rastro-color); font-weight: 600; }
+        body.modo-noche .login-usuario-guardado { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+        .user-info-bar { font-size: 14px; color: var(--color-secundario); padding: 10px 0; margin: 15px 0; border-top: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; }
+        body.modo-noche .user-info-bar { border-color: rgba(255,255,255,0.1); }
+        .btn-salir { background: #dc3545; color: white; border: none; padding: 8px 15px; font-size: 15px; font-weight: normal; cursor: pointer; }
+        .btn-salir:hover { background: #c82333; }
+        .btn-manual { background: #5dade2 !important; color: white !important; }
+        .btn-manual:hover { background: #3498db !important; }
+        .btn-modo-app { background: #28a745; color: white; border: none; padding: 8px 15px; font-size: 15px; font-weight: normal; cursor: pointer; }
+        .btn-modo-app:hover { background: #218838; }
+        .semilla-global-section { margin-top: 15px; padding: 15px; background: #f5f5f5; border: 1px solid #e0e0e0; }
+        body.modo-noche .semilla-global-section { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+        .semilla-global-label { font-size: 14px; color: var(--color-secundario); margin-bottom: 8px; font-weight: 600; }
+        .semilla-global-input { width: 100%; padding: 10px; font-size: 15px; border: 1px solid #d0d0d0; background: var(--color-fondo); color: var(--color-principal); box-sizing: border-box; }
+        .semilla-global-input:focus { outline: none; border: 1px solid #d0d0d0; background: rgba(0,0,0,0.02); }
+        body.modo-noche .semilla-global-input:focus { background: rgba(255,255,255,0.02); }
+        .semilla-global-hint { font-size: 12px; color: var(--color-terciario); margin-top: 5px; }
+    </style>
+    <link rel="stylesheet" href="themes/mobile.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="header-profile">
+            <img src="postear.gif" alt="logo">
+            <div class="header-profile-info">
+                <div class="brand-line">poste.ar</div>
+                <div class="sub-brand">Sitio anónimo, efímero. Ciudadela, Buenos Aires, Argentina.</div>
+            </div>
+        </div>
+        <div class="alerta-box hidden" id="contador-reset">El timeline se borra todos los lunes: calculando...</div>
+        <div id="login-section" class="login-section">
+            <div id="intro-box" class="login-hint" style="display:none;">
+                Una red social anónima: Sin registro. Sin teléfono. Sin email. Nadie sabe quién sos.<br><br>
+                Tu identidad se genera a partir de palabras que solo vos conocés — sin cuenta, sin nada que instalar. Si alguien hackea el servidor, solo encuentra texto cifrado sin sentido: tu password semilla nunca sale de tu cabeza.<br><br>
+                Escribí 4 o 5 palabras (ejemplo: <em>gato verde mesa tiza</em>) y presioná [ entrar ]. Mientras uses las mismas palabras, siempre serás el mismo usuario con un identificador del tipo <em><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a6d1c3d2cf889595e6c0cfcac9889e91">[email&#160;protected]</a></em>. Si las olvidás, esa identidad desaparece para siempre — anotálas en papel, no en el teléfono, no las compartas.<br><br>
+                Podés postear mensajes públicos o cifrados. Los mensajes cifrados tienen su propia semilla que elegís vos: solo quien las conozca podrá leer los mensajes. Ver [ manual ] para más detalles.
+            </div>
+            <div class="login-error hidden" id="login-error">Password equivocado</div>
+            <input type="text" id="identity-input" class="login-input" placeholder="perro mesa luz golf" onkeypress="if(event.key==='Enter') entrar()">
+            <div class="login-checkboxes">
+                <label class="login-checkbox-label">
+                    <input type="checkbox" id="checkbox-recordar-usuario"> Recordar usuario
+                </label>
+                <label class="login-checkbox-label">
+                    <input type="checkbox" id="checkbox-recordar-password"> Recordar password
+                </label>
+            </div>
+            <div class="login-usuario-guardado hidden" id="login-usuario-guardado">
+                Usuario guardado: <span id="usuario-guardado-display"></span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                <button class="btn-postear" onclick="entrar()">[ entrar ]</button>
+                <button class="btn btn-manual" onclick="toggleIntro()">[ ¿qué es esto? ]</button>
+            </div>
+        </div>
+        <div id="main-content" class="hidden">
+            <div class="button-container">
+                <button class="btn" onclick="toggleDiaNoche()" id="btn-modo">[ día ]</button>
+                <button class="btn btn-manual" onclick="toggleManual()">[ manual ]</button>
+                <button class="btn" onclick="cambiarTema()" id="btn-tema">[ default ]</button>
+                <button class="btn" onclick="window.open('https://github.com/Andreottica/poste-ar')">[ source ]</button>
+                <button class="btn-modo-app" onclick="toggleModoApp()" id="btn-modo-app">[ público ]</button>
+            </div>
+            <input type="text" class="search-box" id="search-input" placeholder="Buscar..." onkeyup="buscarConDelay()">
+            <div class="search-info" id="search-info"></div>
+            <button class="btn-volver hidden" id="btn-volver" onclick="volverATodos()">[ volver ]</button>
+            <div class="user-info-bar">
+                Tu usuario: <span id="display-user" style="color:var(--rastro-color); font-weight: 600;">...</span>
+            </div>
+            <div id="manual-box"></div>
+            <div class="editor-section" id="editor-publico-section">
+                <textarea id="editor" maxlength="576" placeholder="Mensaje público..."></textarea>
+                <div class="contador" id="char-count">576 caracteres restantes</div>
+                <div class="button-container button-container-bottom">
+                    <button class="btn-postear" onclick="validarYPostear()">[ postear ]</button>
+                    <button class="btn" onclick="actualizarPosts()">[ actualizar ]</button>
+                    <button class="btn-salir" onclick="salir()">[ salir ]</button>
+                </div>
+            </div>
+            <div class="editor-section hidden" id="editor-encriptado-section">
+                <textarea id="editor-encriptado" maxlength="288" placeholder="Mensaje cifrado..."></textarea>
+                <div class="contador" id="char-count-encriptado">288 caracteres restantes</div>
+                <div class="password-section">
+                    <div class="password-label">Semilla (obligatoria):</div>
+                    <input type="text" id="password-encriptado-input" placeholder="Ejemplo: perro tiza golf maria" class="password-input">
+                    <div class="password-hint">1-12 palabras. Más palabras = más seguridad.</div>
+                </div>
+                <div class="button-container button-container-bottom">
+                    <button class="btn-postear" onclick="postearEncriptado()">[ postear ]</button>
+                    <button class="btn" onclick="actualizarPosts()">[ actualizar ]</button>
+                    <button class="btn-salir" onclick="salir()">[ salir ]</button>
+                </div>
+                <div id="semilla-leer-section" class="semilla-global-section" style="margin-top: 20px;">
+                    <div class="semilla-global-label">Leer mensajes cifrados:</div>
+                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                        <input type="text" id="semilla-leer-input" class="semilla-global-input" placeholder="Ingresá palabras semilla..." onkeypress="if(event.key==='Enter') leerMensajesCifrados()" style="flex: 1;">
+                        <button class="btn" onclick="leerMensajesCifrados()" style="background: #17a2b8; color: white; min-width: 80px;">[ leer ]</button>
+                    </div>
+                    <label class="login-checkbox-label">
+                        <input type="checkbox" id="checkbox-mantener-semilla"> Mantener semillas
+                    </label>
+                </div>
+            </div>
+   
