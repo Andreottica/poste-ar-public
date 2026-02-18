@@ -1,295 +1,258 @@
-POSTE.AR - MANUAL DE USO
-========================
+POSTE.AR - MANUAL
+=================
 
-Red social anónima con identidad persistente.
-Sin registro, sin IPs, sin datos guardados.
-Todo se borra cada lunes a las 00:00 hs.
-
-¿QUÉ ES POSTE.AR?
------------------
-Un lugar para comunicarse sin dejar rastro.
-
-A diferencia de WhatsApp, Telegram, Signal u otros:
-- No pedimos número de teléfono
-- No pedimos email
-- No creás una cuenta
-- No hay empresa que conozca tu identidad
-- No hay perfil que te siga por la web
-- Todo desaparece automáticamente cada lunes
-
-Tu identidad la controlás vos con palabras que
-solo vos conocés. Nada más.
+Ciudadela, Buenos Aires, Argentina.
+Todo se borra cada lunes a las 00:00 hs (hora argentina).
 
 
-TU IDENTIDAD ANÓNIMA
-====================
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+QUÉ ES POSTE.AR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-CÓMO CREAR TU USUARIO
----------------------
-Al entrar por primera vez:
+Una red social donde el centro es el posteo, no el usuario.
 
-1. Escribí 4-5 palabras (ej: perro mesa luz golf)
-2. Presioná [ entrar ]
-3. El sistema genera tu usuario anónimo (ej: meno.34.rite.87)
+No hay registro. No hay cuenta. No hay perfil.
+Entrás, publicás, leés. Sin dejar rastro.
 
-IMPORTANTE: Tus palabras SON tu identidad.
-- Si las recordás → siempre recuperás el mismo usuario
-- Si las olvidás → perdés tu identidad para siempre
-- Si las compartís → otra persona puede publicar como vos
+El sitio tiene dos espacios separados:
 
-RECUPERAR TU USUARIO
---------------------
-Para volver a ser el mismo usuario:
-
-1. Ingresá las MISMAS palabras que usaste antes
-2. El sistema genera el MISMO usuario automáticamente
-
-CAMBIAR DE IDENTIDAD
----------------------
-Presioná [ salir ] y entrá con palabras distintas.
-Cada combinación de palabras genera un usuario único.
-
-RECOMENDACIONES
----------------
-- Usá 4-5 palabras fáciles de recordar
-- Ejemplo: "gato verde tiza luna"
-- Anotá tus palabras en papel (NO en computadora)
-- Nunca uses menos de 3 palabras (muy inseguro)
-
-RECORDAR SESIÓN
----------------
-Al entrar podés tildar:
-- "Recordar usuario": muestra tu usuario al volver
-- "Recordar password": entra automáticamente al abrir
-
-Si destildás una opción, se borra inmediatamente.
-Para mayor seguridad, destildá todo antes de cerrar
-en una computadora compartida.
+  [ encriptado → ]  Lleva al timeline cifrado (privado)
+  [ ← público ]     Vuelve al timeline público (abierto)
 
 
-DOS MODOS DE USO
-================
+TIMELINE PÚBLICO
+----------------
+Cualquiera puede leer. Cualquiera puede escribir.
+No es para gente que te sigue o que seguís.
+Es un espacio abierto, como una pizarra pública.
 
-Poste.ar tiene dos modos completamente separados.
-El botón [ público ] / [ encriptado ] los alterna.
+Cada posteo recibe una firma automática única:
+  reti.344@poste.ar
 
-Cambiar de modo borra el contexto del otro modo.
+Ese código identifica al posteo, no a la persona.
+Sirve para citar o referenciar un mensaje:
+  "en reti.344@poste.ar se habla de esto..."
 
 
-MODO PÚBLICO
-============
+TIMELINE CIFRADO
+----------------
+Un canal invisible al timeline público.
+Solo existe para quien tenga las palabras semilla correctas.
 
-El timeline abierto. Todos pueden leer.
+La seguridad es la misma que usan los bancos
+y las transacciones de criptomonedas (AES-256).
 
-PUBLICAR
---------
+Como en las películas de espionaje: para leer un mensaje
+cifrado, el receptor necesita conocer la clave.
+Sin la clave, el mensaje no existe.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CÓMO SE USA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PUBLICAR EN EL TIMELINE PÚBLICO
+--------------------------------
 1. Escribí tu mensaje (máximo 576 caracteres)
 2. Presioná [ postear ]
-3. Aparece en el timeline con tu usuario y color
+3. Aparece en el timeline con su firma automática
 
 FORMATO DE TEXTO
 ----------------
-*texto*              → negrita
-_texto_              → cursiva
-<nombre:url.com>     → enlace clickeable
-#hashtag             → etiqueta destacada
+*texto*           → negrita
+_texto_           → cursiva
+<nombre:url.com>  → enlace clickeable
+#hashtag          → etiqueta destacada
 
 Ejemplo:
-Esto es *importante* y _urgente_.
-Más info: <aquí:ejemplo.com> #documentos
+  Esto es *importante* y _urgente_.
+  Más info: <aquí:ejemplo.com> #tema
+
 
 BUSCAR
 ------
-El buscador encuentra mensajes en toda la base.
+El buscador filtra mensajes en toda la base.
 
-- Una palabra: "documentos"
-- Varias palabras: "documentos, firmados"
-- No distingue mayúsculas/minúsculas
+  Una palabra:       gato
+  Varias palabras:   gato, verde
+  No distingue mayúsculas/minúsculas.
 
 
-MODO ENCRIPTADO
-===============
-
-Un canal cifrado invisible al timeline público.
-Solo existe para quien tenga las palabras semilla.
-
-Nadie puede saber que hay mensajes cifrados.
-Nadie puede leerlos sin la semilla correcta.
-
-PUBLICAR EN MODO ENCRIPTADO
-----------------------------
-1. Pasá a modo [ encriptado ]
+PUBLICAR EN EL TIMELINE CIFRADO
+---------------------------------
+1. Presioná [ encriptado → ] para cambiar de modo
 2. Escribí tu mensaje (máximo 288 caracteres)
-3. Escribí tu semilla (contraseña de grupo)
-4. Presioná [ postear ]
+3. Escribí tu semilla (la contraseña del canal)
+4. Opcionalmente, escribí un nick o seudónimo
+5. Presioná [ postear ]
 
-El mensaje se cifra en TU navegador antes de enviarse.
+El mensaje se cifra en tu navegador antes de salir.
 El servidor recibe solo texto ilegible.
+
 
 LEER MENSAJES CIFRADOS
 -----------------------
-1. Abajo de los botones aparece la sección "Leer"
-2. Escribí la semilla compartida
-3. Presioná [ leer ]
-4. Aparecen TODOS los mensajes que coincidan
+1. En el timeline cifrado, ingresá la semilla compartida
+2. Presioná [ leer ]
+3. Aparecen todos los mensajes que coincidan con esa semilla
 
-Si la semilla es incorrecta: no aparece nada.
-No hay mensaje de error porque no hay nada que mostrar.
+Si la semilla es incorrecta, no aparece nada.
+No hay mensaje de error: simplemente no hay nada que mostrar.
 
-MANTENER SEMILLA
------------------
-Tildá "Mantener semillas" para no tener que
-reescribir la semilla entre posteo y posteo.
 
-Al volver a modo público se destilda automáticamente.
+EL NICK O SEUDÓNIMO (timeline cifrado)
+---------------------------------------
+Al postear en el timeline cifrado, podés escribir
+un nick en el campo "Tu nick". Es opcional.
 
-CONVERSACIONES GRUPALES CIFRADAS
----------------------------------
+Si escribís "pepe", tus mensajes aparecerán así:
+  pepe.01@poste.ar
+  pepe.02@poste.ar
+  pepe.03@poste.ar  (uno por cada posteo, en orden)
+
+El nick viaja cifrado dentro del mensaje.
+El servidor nunca lo ve.
+
+Si no escribís nick, el posteo muestra su firma automática.
+
+
+GRUPOS DE CHAT CIFRADOS
+------------------------
 Cuando varias personas usan la MISMA semilla,
-se crea un canal secreto compartido.
+se forma un canal secreto compartido.
 
-Ejemplo con semilla "gato verde luna":
-- Ana publica mensaje cifrado
-- Carlos publica mensaje cifrado
-- María publica mensaje cifrado
+Ejemplo con semilla "perro mesa luz":
+  - Ana publica con nick "ana"
+  - Carlos publica con nick "carlos"
+  - María publica sin nick
 
-Cuando cualquiera ingresa "gato verde luna":
-→ Se ven TODOS los mensajes del grupo
-→ En orden cronológico
-→ Cada uno con su usuario y color
+Al ingresar "perro mesa luz":
+  → Se ven TODOS los mensajes del grupo
+  → Con sus nicks: ana.01, carlos.01, etc.
+  → En orden cronológico inverso (el más nuevo arriba)
+  → Sin rastro en el timeline público
 
-→ Sin rastro en el timeline público
-→ Sin que nadie más sepa que existe ese canal
-
-DIFERENCIA IMPORTANTE
----------------------
-- Palabras de IDENTIDAD: crean tu usuario permanente
-- Semilla de MENSAJES: cifra el contenido del canal
-
-Son DOS cosas distintas. No las confundas.
+Para chatear en grupo: compartí las palabras semilla
+solo con quienes quieras que lean el canal.
+Quien no las tenga, no puede acceder ni saber que existe.
 
 
 HERRAMIENTAS
-============
-
-ACTUALIZAR
-----------
-Presioná [ actualizar ] para ver mensajes nuevos.
-
-TEMAS Y MODO NOCHE
-------------------
-[ tema ] → Cambia el estilo visual (desktop)
-[ día/noche ] → Alterna modo claro/oscuro
-
-SALIR
------
-Presioná [ salir ] para cerrar tu sesión.
-Tu identidad se borra del navegador.
+------------
+[ actualizar ]  → Carga los mensajes nuevos
+[ tema ]        → Cambia el estilo visual
+[ día / noche ] → Alterna modo claro/oscuro
+[ source ]      → Código fuente del sitio (GitHub)
+[ manual ]      → Este texto
 
 
-SEGURIDAD Y PRIVACIDAD
-======================
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ARQUITECTURA Y SEGURIDAD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-CIFRADO AES-256
----------------
-Mismo estándar que bancos y apps de mensajería segura.
-
-Con 4-5 palabras: romper el cifrado requiere años
-de procesamiento con supercomputadoras.
-
-CÓMO FUNCIONA
--------------
-1. Escribís mensaje + semilla en TU navegador
-2. TU navegador cifra el mensaje (AES-256)
-3. Se envía al servidor SOLO la versión cifrada
+CÓMO FUNCIONA EL CIFRADO
+--------------------------
+1. Escribís mensaje + semilla en tu navegador
+2. Tu navegador cifra el mensaje (AES-256)
+3. Se envía al servidor solo la versión cifrada
 4. El servidor guarda texto ilegible
 
-El servidor NUNCA ve:
-- Tus palabras de identidad
-- Tus semillas de mensajes
-- El contenido de mensajes cifrados
+El descifrado también ocurre en el navegador,
+no en el servidor. La semilla nunca sale de tu dispositivo.
 
-QUÉ NO GUARDAMOS
-----------------
-- Palabras de identidad
-- Semillas de mensajes
-- Direcciones IP
-- Datos del navegador
-- Cookies de rastreo
-- Ubicación geográfica
-
-QUÉ SÍ GUARDAMOS
-----------------
-- Mensajes públicos (texto plano)
-- Mensajes cifrados (ilegibles para el servidor)
-- Usuario generado (ej: meno.34.rite.87)
-- Fecha y hora de publicación
-- Color del usuario (generado automáticamente)
-
-TODO SE BORRA CADA LUNES 00:00 HS
-----------------------------------
-Máximo de vida de un mensaje: 7 días.
-El sitio muestra un contador con el tiempo restante.
+Esto es diferente a WhatsApp, Telegram y la mayoría
+de las apps "seguras": en esas plataformas, la empresa
+conoce al menos tu número de teléfono o email.
+Acá no hay empresa que te conozca porque no hay
+ningún dato tuyo que llegue al servidor.
 
 
-LÍMITES TÉCNICOS
-================
+QUÉ GUARDA EL SERVIDOR
+------------------------
+  ✓ Mensajes públicos (texto plano)
+  ✓ Mensajes cifrados (ilegibles para el servidor)
+  ✓ Firma automática del posteo (ej: reti.344@poste.ar)
+  ✓ Fecha y hora de publicación
 
-CARACTERES
-----------
-- Mensaje público: 576 caracteres máximo
-- Mensaje cifrado: 288 caracteres máximo
-- Palabras de identidad: 3-12 palabras
-- Semilla de mensajes: 1-12 palabras (más = más seguro)
+QUÉ NO GUARDA EL SERVIDOR
+---------------------------
+  ✗ Semillas de mensajes
+  ✗ Nicks o seudónimos (van cifrados dentro del mensaje)
+  ✗ Direcciones IP
+  ✗ Datos del navegador
+  ✗ Cookies de rastreo
+  ✗ Ubicación
 
-SIN EDICIÓN
------------
-No se pueden editar ni borrar mensajes.
-Solo desaparecen el lunes 00:00hs.
 
-SIN MULTIMEDIA
---------------
+LA FIRMA AUTOMÁTICA
+--------------------
+Cada posteo recibe un identificador único generado
+por el servidor a partir de un contador interno:
+
+  silaba.número@poste.ar   →   reti.344@poste.ar
+
+La sílaba es determinística (siempre la misma para ese ID).
+El número nunca supera 999.
+La combinación es única e irrepetible para cada posteo.
+
+No identifica a la persona. Solo al posteo.
+
+
+PURGA SEMANAL
+-------------
+Todos los mensajes (públicos y cifrados) se borran
+automáticamente cada lunes a las 00:00 hs (Argentina).
+Máxima vida de un mensaje: 7 días.
+No hay forma de recuperarlos después del borrado.
+
+
+LÍMITES
+-------
+  Mensaje público:   576 caracteres
+  Mensaje cifrado:   288 caracteres
+  Semilla:           1 a 12 palabras (más palabras = más seguridad)
+  Nick:              hasta 20 caracteres
+
+No se pueden editar ni borrar mensajes antes del lunes.
 Solo texto. No se aceptan imágenes, videos ni archivos.
 
 
-FILOSOFÍA
-=========
-
-En un mundo donde todo se registra y vende,
-poste.ar es un espacio que se borra solo.
-
-No hay algoritmos. No hay perfiles. No hay permanencia.
-No hay empresa que venda tus datos.
-No hay teléfono que te identifique.
-
-Solo comunicación, aquí y ahora.
-
-CÓDIGO ABIERTO
---------------
-El código completo es público y auditable.
-Presioná [ source ] para acceder al repositorio.
-
 STACK TÉCNICO
 -------------
-- Frontend: HTML, CSS, JavaScript vanilla
-- Backend: Node.js + Express
-- Base de datos: LibSQL (SQLite remoto)
-- Cifrado: CryptoJS (AES-256 + SHA-256)
+  Frontend:   HTML, CSS, JavaScript vanilla
+  Backend:    Node.js + Express
+  Base datos: SQL relacional en servidor remoto
+  Cifrado:    AES-256 y SHA-256 (lado cliente)
+  Hosting:    Servidor en la nube con CDN y proxy de seguridad
 
 
-ADVERTENCIAS
-============
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+USO RESPONSABLE Y AVISO LEGAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-- Anotá tus palabras de identidad en PAPEL
-- No publiques contenido ilegal
-- El anonimato no te protege de consecuencias legales
-- Si olvidás tus palabras de identidad: perdés tu usuario PARA SIEMPRE
-- Si olvidás una semilla de mensaje: ese canal se pierde PARA SIEMPRE
-- No hay recuperación posible (no guardamos nada)
+poste.ar es una herramienta de comunicación anónima
+de código abierto, disponible para su uso libre.
+
+El anonimato no otorga impunidad legal.
+Publicar contenido ilegal sigue siendo ilegal,
+independientemente del medio utilizado.
+
+Está prohibido publicar:
+  - Contenido que incite a la violencia
+  - Material de abuso o explotación
+  - Información que ponga en riesgo la seguridad de terceros
+  - Cualquier contenido ilegal bajo la legislación argentina
+
+El autor del sitio no se responsabiliza por el uso
+que terceros hagan de esta plataforma.
+El código fuente es público y auditable en GitHub
+(presioná [ source ] para acceder).
+
+Usalo con criterio.
 
 
 ============================================
-Versión: 4.0 - Modos público y encriptado separados
+Versión: 5.0
 Última actualización: Febrero 2026
 Ciudadela, Buenos Aires, Argentina
 ============================================
