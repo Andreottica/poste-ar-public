@@ -101,12 +101,12 @@
         body.modo-noche .login-usuario-guardado { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
         .user-info-bar { font-size: 14px; color: var(--color-secundario); padding: 10px 0; margin: 15px 0; border-top: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; }
         body.modo-noche .user-info-bar { border-color: rgba(255,255,255,0.1); }
-        .btn-salir { background: #dc3545; color: white; border: none; padding: 8px 15px; font-size: 15px; font-weight: normal; cursor: pointer; }
-        .btn-salir:hover { background: #c82333; }
+        .btn-contacto { background: #ffc107; color: #000; border: none; padding: 8px 15px; font-size: 15px; font-weight: normal; cursor: pointer; }
+        .btn-contacto:hover { filter: brightness(1.1); }
         .btn-manual { background: #5dade2 !important; color: white !important; }
         .btn-manual:hover { background: #3498db !important; }
-        .btn-modo-app { background: #28a745; color: white; border: none; padding: 8px 15px; font-size: 15px; font-weight: normal; cursor: pointer; }
-        .btn-modo-app:hover { background: #218838; }
+        .btn-modo-app { background: #dc3545; color: white; border: none; padding: 8px 15px; font-size: 15px; font-weight: normal; cursor: pointer; }
+        .btn-modo-app:hover { filter: brightness(1.1); }
         .semilla-global-section { margin-top: 15px; padding: 15px; background: #f5f5f5; border: 1px solid #e0e0e0; }
         body.modo-noche .semilla-global-section { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
         .semilla-global-label { font-size: 14px; color: var(--color-secundario); margin-bottom: 8px; font-weight: 600; }
@@ -128,67 +128,58 @@
             </div>
         </div>
         <div class="alerta-box hidden" id="contador-reset">El timeline se borra todos los lunes: calculando...</div>
-        <div id="login-section" class="login-section">
-            <div id="intro-box" class="login-hint" style="display:none;">
-                Una red social anónima: Sin registro. Sin teléfono. Sin email. Nadie sabe quién sos.<br><br>
-                Tu identidad se genera a partir de palabras que solo vos conocés — sin cuenta, sin nada que instalar. Si alguien hackea el servidor, solo encuentra texto cifrado sin sentido: tu password semilla nunca sale de tu cabeza.<br><br>
-                Escribí 4 o 5 palabras (ejemplo: <em>gato verde mesa tiza</em>) y presioná [ entrar ]. Mientras uses las mismas palabras, siempre serás el mismo usuario con un identificador del tipo <em><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a6d1c3d2cf889595e6c0cfcac9889e91">[email&#160;protected]</a></em>. Si las olvidás, esa identidad desaparece para siempre — anotálas en papel, no en el teléfono, no las compartas.<br><br>
-                Podés postear mensajes públicos o cifrados. Los mensajes cifrados tienen su propia semilla que elegís vos: solo quien las conozca podrá leer los mensajes. Ver [ manual ] para más detalles.
-            </div>
-            <div class="login-error hidden" id="login-error">Password equivocado</div>
-            <input type="text" id="identity-input" class="login-input" placeholder="perro mesa luz golf" onkeypress="if(event.key==='Enter') entrar()">
-            <div class="login-checkboxes">
-                <label class="login-checkbox-label">
-                    <input type="checkbox" id="checkbox-recordar-usuario"> Recordar usuario
-                </label>
-                <label class="login-checkbox-label">
-                    <input type="checkbox" id="checkbox-recordar-password"> Recordar password
-                </label>
-            </div>
-            <div class="login-usuario-guardado hidden" id="login-usuario-guardado">
-                Usuario guardado: <span id="usuario-guardado-display"></span>
-            </div>
-            <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
-                <button class="btn-postear" onclick="entrar()">[ entrar ]</button>
-                <button class="btn btn-manual" onclick="toggleIntro()">[ ¿qué es esto? ]</button>
-            </div>
-        </div>
-        <div id="main-content" class="hidden">
+        <div id="main-content">
             <div class="button-container">
-                <button class="btn" onclick="toggleDiaNoche()" id="btn-modo">[ día ]</button>
                 <button class="btn btn-manual" onclick="toggleManual()">[ manual ]</button>
+                <button class="btn-contacto" onclick="toggleContacto()">[ contacto ]</button>
                 <button class="btn" onclick="cambiarTema()" id="btn-tema">[ default ]</button>
-                <button class="btn" onclick="window.open('https://github.com/Andreottica/poste-ar')">[ source ]</button>
-                <button class="btn-modo-app" onclick="toggleModoApp()" id="btn-modo-app">[ público ]</button>
+                <button class="btn" onclick="window.open('https://github.com/Andreottica/poste-ar-public')">[ source ]</button>
+                <button class="btn-modo-app" onclick="toggleModoApp()" id="btn-modo-app">[ encriptado → ]</button>
             </div>
             <input type="text" class="search-box" id="search-input" placeholder="Buscar..." onkeyup="buscarConDelay()">
             <div class="search-info" id="search-info"></div>
             <button class="btn-volver hidden" id="btn-volver" onclick="volverATodos()">[ volver ]</button>
             <div class="user-info-bar">
-                Tu usuario: <span id="display-user" style="color:var(--rastro-color); font-weight: 600;">...</span>
+                conectado a la base de datos: <span style="color: #28a745; font-weight: 600;">ok</span>
             </div>
             <div id="manual-box"></div>
+            <div id="contacto-box" style="display:none; margin: 15px 0; padding: 15px; border: 1px solid var(--gris-suave); background: var(--color-fondo);">
+                <div style="font-size: 14px; color: var(--color-secundario); margin-bottom: 10px;">Mensaje al administrador. Es anónimo y cifrado.</div>
+                <textarea id="editor-contacto" maxlength="576" placeholder="Escribí tu mensaje..."></textarea>
+                <div class="button-container button-container-bottom" style="margin-top: 8px;">
+                    <button class="btn-postear" onclick="enviarContacto()">[ enviar ]</button>
+                </div>
+            </div>
             <div class="editor-section" id="editor-publico-section">
                 <textarea id="editor" maxlength="576" placeholder="Mensaje público..."></textarea>
                 <div class="contador" id="char-count">576 caracteres restantes</div>
                 <div class="button-container button-container-bottom">
                     <button class="btn-postear" onclick="validarYPostear()">[ postear ]</button>
                     <button class="btn" onclick="actualizarPosts()">[ actualizar ]</button>
-                    <button class="btn-salir" onclick="salir()">[ salir ]</button>
+                    <button class="btn" onclick="toggleDiaNoche()" id="btn-modo-2">[ día ]</button>
                 </div>
             </div>
             <div class="editor-section hidden" id="editor-encriptado-section">
                 <textarea id="editor-encriptado" maxlength="288" placeholder="Mensaje cifrado..."></textarea>
                 <div class="contador" id="char-count-encriptado">288 caracteres restantes</div>
                 <div class="password-section">
-                    <div class="password-label">Semilla (obligatoria):</div>
-                    <input type="text" id="password-encriptado-input" placeholder="Ejemplo: perro tiza golf maria" class="password-input">
-                    <div class="password-hint">1-12 palabras. Más palabras = más seguridad.</div>
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <div class="password-label">Semilla (obligatoria):</div>
+                            <input type="text" id="password-encriptado-input" placeholder="Ejemplo: perro tiza golf maria" class="password-input">
+                            <div class="password-hint">1-12 palabras. Más palabras = más seguridad.</div>
+                        </div>
+                        <div style="width: 120px;">
+                            <div class="password-label">Tu nick:</div>
+                            <input type="text" id="nick-encriptado-input" placeholder="pepe" class="password-input" maxlength="20">
+                            <div class="password-hint">Opcional.</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="button-container button-container-bottom">
                     <button class="btn-postear" onclick="postearEncriptado()">[ postear ]</button>
                     <button class="btn" onclick="actualizarPosts()">[ actualizar ]</button>
-                    <button class="btn-salir" onclick="salir()">[ salir ]</button>
+                    <button class="btn" onclick="toggleDiaNoche()" id="btn-modo-3">[ día ]</button>
                 </div>
                 <div id="semilla-leer-section" class="semilla-global-section" style="margin-top: 20px;">
                     <div class="semilla-global-label">Leer mensajes cifrados:</div>
@@ -201,4 +192,10 @@
                     </label>
                 </div>
             </div>
-   
+        </div>
+    </header>
+    <div id="timeline"></div>
+</div>
+    <script src="postear.js"></script>
+</body>
+</html>
