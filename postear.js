@@ -1,6 +1,4 @@
-    let miMarca = "";
-    let miColor = "";
-    let buscando = false;
+let buscando = false;
     let timeoutBusqueda = null;
     let todosLosPosts = [];
     let temas = ['default', 'retro'];
@@ -8,31 +6,6 @@
     let modoOscuro = localStorage.getItem('modo') === 'noche';
     let modoApp = 'publico';
     let semillaGlobalActiva = '';
-    let offsetActual = 0;
-    let cargandoMas = false;
-    let hayMasPosts = true;
-
-    // Toast notification
-    function mostrarToast(mensaje, tipo) {
-        let toast = document.getElementById('toast-msg');
-        if(!toast) {
-            toast = document.createElement('div');
-            toast.id = 'toast-msg';
-            toast.style.cssText = `
-                position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-                padding: 12px 24px; border-radius: 4px; font-size: 14px; font-weight: 500;
-                z-index: 9999; opacity: 0; transition: opacity 0.3s ease;
-                max-width: 90vw; text-align: center; pointer-events: none;
-            `;
-            document.body.appendChild(toast);
-        }
-        toast.innerText = mensaje;
-        toast.style.background = tipo === 'error' ? '#c0392b' : tipo === 'ok' ? '#27ae60' : '#333';
-        toast.style.color = 'white';
-        toast.style.opacity = '1';
-        clearTimeout(toast._timeout);
-        toast._timeout = setTimeout(() => { toast.style.opacity = '0'; }, 2500);
-    }
     async function cargarListaTemas() {
         try {
             const response = await fetch('/api/temas');
@@ -60,12 +33,16 @@
         }
         if(modoOscuro) {
             document.body.classList.add('modo-noche');
-            const btnModo = document.getElementById('btn-modo');
-            if(btnModo) btnModo.innerText = '[ noche ]';
+            ['btn-modo-2', 'btn-modo-3'].forEach(id => {
+                const btn = document.getElementById(id);
+                if(btn) btn.innerText = '[ noche ]';
+            });
         } else {
             document.body.classList.remove('modo-noche');
-            const btnModo = document.getElementById('btn-modo');
-            if(btnModo) btnModo.innerText = '[ día ]';
+            ['btn-modo-2', 'btn-modo-3'].forEach(id => {
+                const btn = document.getElementById(id);
+                if(btn) btn.innerText = '[ día ]';
+            });
         }
     }
     function cambiarTema() {
@@ -80,10 +57,16 @@
         localStorage.setItem('modo', modoOscuro ? 'noche' : 'dia');
         cargarTema();
     }
+    function cerrarContacto() {
+        document.getElementById('contacto-box').style.display = 'none';
+    }
     function toggleModoApp() {
+        cerrarContacto();
         if(modoApp === 'publico') {
             modoApp = 'encriptado';
-            document.getElementById('btn-modo-app').innerText = '[ encriptado ]';
+            const btn = document.getElementById('btn-modo-app');
+            btn.innerText = '[ ← público ]';
+            btn.style.background = '#28a745';
             document.getElementById('editor-publico-section').classList.add('hidden');
             document.getElementById('editor-encriptado-section').classList.remove('hidden');
             document.getElementById('search-input').classList.add('hidden');
@@ -93,7 +76,9 @@
             semillaGlobalActiva = '';
         } else {
             modoApp = 'publico';
-            document.getElementById('btn-modo-app').innerText = '[ público ]';
+            const btn = document.getElementById('btn-modo-app');
+            btn.innerText = '[ encriptado → ]';
+            btn.style.background = '#dc3545';
             document.getElementById('editor-publico-section').classList.remove('hidden');
             document.getElementById('editor-encriptado-section').classList.add('hidden');
             document.getElementById('search-input').classList.remove('hidden');
@@ -112,122 +97,66 @@
         const min = String(fecha.getMinutes()).padStart(2, '0');
         return `${dia}-${mes} ${hora}:${min}hs`;
     }
-    function generarUsuarioDesdeIdentidad(identidad) {
-        const hash = CryptoJS.SHA256(identidad).toString();
-        const silabas = ['ba','be','bi','bo','bu','ca','ce','ci','co','cu','da','de','di','do','du','fa','fe','fi','fo','fu','ga','ge','gi','go','gu','ja','je','ji','jo','ju','ka','ke','ki','ko','ku','la','le','li','lo','lu','ma','me','mi','mo','mu','na','ne','ni','no','nu','pa','pe','pi','po','pu','ra','re','ri','ro','ru','sa','se','si','so','su','ta','te','ti','to','tu','va','ve','vi','vo','vu','xa','xe','xi','xo','xu','ya','ye','yi','yo','yu','za','ze','zi','zo','zu'];
-        const idx1 = parseInt(hash.substring(0, 8), 16) % silabas.length;
-        const num1 = parseInt(hash.substring(8, 16), 16) % 90 + 10;
-        const idx2 = parseInt(hash.substring(16, 24), 16) % silabas.length;
-        const num2 = parseInt(hash.substring(24, 32), 16) % 90 + 10;
-        return `${silabas[idx1]}${silabas[idx2]}.${num1}@${silabas[(idx1+idx2)%silabas.length]}${silabas[(num1+num2)%silabas.length]}.${num2}`;
+
+    function cerrarContacto() {
+        document.getElementById('contacto-box').style.display = 'none';
     }
-    function generarColorDesdeIdentidad(identidad) {
-        const hash = CryptoJS.SHA256(identidad).toString();
-        const hue = parseInt(hash.substring(0, 8), 16) % 360;
-        return `hsl(${hue}, 60%, 45%)`;
-    }
-    function entrar() {
-        let identidad = document.getElementById('identity-input').value.trim();
-        const recordarUsuario = document.getElementById('checkbox-recordar-usuario').checked;
-        const recordarPassword = document.getElementById('checkbox-recordar-password').checked;
-        const loginError = document.getElementById('login-error');
-        const passwordGuardado = localStorage.getItem('password-guardado');
-        loginError.classList.add('hidden');
-        if(!recordarUsuario) {
-            localStorage.removeItem('usuario-guardado');
-        }
-        if(!recordarPassword) {
-            localStorage.removeItem('password-guardado');
-        }
-        if(recordarPassword && passwordGuardado && !identidad) {
-            identidad = passwordGuardado;
-        }
-        if(!identidad) {
-            mostrarToast('Ingresá al menos 3 palabras', 'error');
-            return;
-        }
-        const palabras = identidad.split(/\s+/);
-        if(palabras.length < 3 || palabras.length > 12) {
-            mostrarToast('Usá entre 3 y 12 palabras', 'error');
-            return;
-        }
-        const usuarioGuardado = localStorage.getItem('usuario-guardado');
-        if(usuarioGuardado) {
-            const usuarioIngresado = generarUsuarioDesdeIdentidad(identidad);
-            if(usuarioIngresado !== usuarioGuardado) {
-                loginError.classList.remove('hidden');
-                return;
+    function toggleContacto() {
+        const box = document.getElementById('contacto-box');
+        const abierto = box.style.display === 'block';
+        cerrarContacto();
+        document.getElementById('manual-box').style.display = 'none';
+        if(!abierto) {
+            // cerrar ambos editores
+            document.getElementById('editor-publico-section').classList.add('hidden');
+            document.getElementById('editor-encriptado-section').classList.add('hidden');
+            document.getElementById('search-input').classList.add('hidden');
+            document.getElementById('search-info').classList.add('hidden');
+            document.getElementById('btn-volver').classList.add('hidden');
+            box.style.display = 'block';
+        } else {
+            // al cerrar contacto, restaurar el modo actual
+            if(modoApp === 'publico') {
+                document.getElementById('editor-publico-section').classList.remove('hidden');
+                document.getElementById('search-input').classList.remove('hidden');
+            } else {
+                document.getElementById('editor-encriptado-section').classList.remove('hidden');
             }
         }
-        sessionStorage.setItem('identidad', identidad);
-        miMarca = generarUsuarioDesdeIdentidad(identidad);
-        miColor = generarColorDesdeIdentidad(identidad);
-        if(recordarUsuario) {
-            localStorage.setItem('usuario-guardado', miMarca);
-        }
-        if(recordarPassword) {
-            localStorage.setItem('password-guardado', identidad);
-        }
-        document.documentElement.style.setProperty('--rastro-color', miColor);
-        document.getElementById('display-user').innerText = miMarca;
-        document.getElementById('login-section').classList.add('hidden');
-        document.getElementById('contador-reset').classList.remove('hidden');
-        document.getElementById('main-content').classList.remove('hidden');
-        cargarTimeline();
     }
-    function salir() {
-        sessionStorage.removeItem('identidad');
-        miMarca = "";
-        miColor = "";
-        document.getElementById('login-section').classList.remove('hidden');
-        document.getElementById('contador-reset').classList.add('hidden');
-        document.getElementById('main-content').classList.add('hidden');
-        document.getElementById('identity-input').value = '';
-        document.getElementById('timeline').innerHTML = '';
-        document.getElementById('login-error').classList.add('hidden');
-        modoApp = 'publico';
-        semillaGlobalActiva = '';
-        cargarPreferenciasLogin();
-    }
-    function cargarPreferenciasLogin() {
-        const usuarioGuardado = localStorage.getItem('usuario-guardado');
-        const passwordGuardado = localStorage.getItem('password-guardado');
-        const usuarioDisplay = document.getElementById('login-usuario-guardado');
-        const usuarioGuardadoSpan = document.getElementById('usuario-guardado-display');
-        if(usuarioGuardado) {
-            document.getElementById('checkbox-recordar-usuario').checked = true;
-            usuarioDisplay.classList.remove('hidden');
-            usuarioGuardadoSpan.innerText = usuarioGuardado;
-        } else {
-            document.getElementById('checkbox-recordar-usuario').checked = false;
-            usuarioDisplay.classList.add('hidden');
+    async function enviarContacto() {
+        const texto = document.getElementById('editor-contacto').value.trim();
+        if(!texto) {
+            alert('Escribí un mensaje antes de enviar');
+            return;
         }
-        if(passwordGuardado) {
-            document.getElementById('checkbox-recordar-password').checked = true;
-        } else {
-            document.getElementById('checkbox-recordar-password').checked = false;
+        try {
+            const resSemilla = await fetch('/api/contacto-semilla');
+            const { semilla } = await resSemilla.json();
+            const contenidoCifrado = CryptoJS.AES.encrypt(`[contacto] ${texto}`, semilla).toString();
+            const payload = {
+                contenido: '.',
+                contenido_oculto: contenidoCifrado
+            };
+            const res = await fetch('/api/postear', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            if(res.ok) {
+                document.getElementById('editor-contacto').value = '';
+                document.getElementById('contacto-box').style.display = 'none';
+                alert('Mensaje enviado al administrador.');
+            } else {
+                alert('Error al enviar');
+            }
+        } catch(e) {
+            console.error('Error:', e);
+            alert('Error de conexión');
         }
-    }
-    function verificarSesion() {
-        const identidad = sessionStorage.getItem('identidad');
-        if(identidad) {
-            miMarca = generarUsuarioDesdeIdentidad(identidad);
-            miColor = generarColorDesdeIdentidad(identidad);
-            document.documentElement.style.setProperty('--rastro-color', miColor);
-            document.getElementById('display-user').innerText = miMarca;
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('contador-reset').classList.remove('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-            cargarTimeline();
-        } else {
-            cargarPreferenciasLogin();
-        }
-    }
-    function toggleIntro() {
-        const box = document.getElementById('intro-box');
-        box.style.display = box.style.display === 'block' ? 'none' : 'block';
     }
     function toggleManual() {
+        cerrarContacto();
         const box = document.getElementById('manual-box');
         if(box.style.display === 'block') { box.style.display = 'none'; return; }
         fetch('postear.txt').then(r => r.text()).then(t => {
@@ -273,10 +202,20 @@
             console.error('Error al cargar timeline:', e);
         }
     }
+    function escaparHTML(texto) {
+        return texto
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
     function procesarTexto(texto) {
-        let html = texto;
-        html = html.replace(/<([^<>]+?):(https?:\/\/[^<>]+?)>/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-        html = html.replace(/<([^<>]+?):(?!\/\/)([^<>\s]+)>/g, '<a href="http://$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        // Primero escapar todo el HTML para prevenir XSS
+        let html = escaparHTML(texto);
+        // Luego aplicar nuestro markdown propio (sobre texto ya seguro)
+        html = html.replace(/&lt;([^&]+?):(https?:\/\/[^&]+?)&gt;/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        html = html.replace(/&lt;([^&]+?):(?!\/\/)([^&\s]+)&gt;/g, '<a href="http://$2" target="_blank" rel="noopener noreferrer">$1</a>');
         html = html.replace(/\*([^\*]+)\*/g, '<b>$1</b>');
         html = html.replace(/_(.*?)_/g, '<i>$1</i>');
         html = html.replace(/#(\w+)/g, '<span style="color: #d32f2f; font-weight: bold;">#$1</span>');
@@ -298,12 +237,13 @@
             postDiv.className = 'post';
             const idAv = `av-${post.id}`;
             const htmlContent = procesarTexto(post.contenido);
-            const fecha = new Date(post.fecha);
             const fechaStr = formatearFecha(post.fecha);
+            const etiquetaSegura = escaparHTML(post.etiqueta);
+            const colorSeguro = escaparHTML(post.color);
             postDiv.innerHTML = `
                 <div class="avatar" id="${idAv}"></div>
                 <div class="post-body">
-                    <div class="marca-tag" style="color: ${post.color}">${post.etiqueta}</div>
+                    <div class="marca-tag" style="color: ${colorSeguro}">${etiquetaSegura}</div>
                     <div class="fecha-tag">${fechaStr}</div>
                     <div style="white-space: pre-wrap; font-size: 15px;">${htmlContent}</div>
                 </div>
@@ -316,7 +256,7 @@
     async function leerMensajesCifrados() {
         const semilla = document.getElementById('semilla-leer-input').value.trim();
         if(!semilla) {
-            mostrarToast('Ingresá una semilla para descifrar', 'error');
+            alert('Ingresá una semilla para descifrar mensajes');
             return;
         }
         semillaGlobalActiva = semilla;
@@ -332,11 +272,20 @@
                     const textoDescifrado = bytes.toString(CryptoJS.enc.Utf8);
                     console.log('Texto descifrado:', textoDescifrado, 'Largo:', textoDescifrado.length);
                     if(textoDescifrado && textoDescifrado.length > 0) {
+                        // Extraer nick si existe: formato [nick] mensaje
+                        let nickBase = null;
+                        let textoMostrar = textoDescifrado;
+                        const matchNick = textoDescifrado.match(/^\[([^\]]+)\]\s*/);
+                        if(matchNick) {
+                            nickBase = matchNick[1];
+                            textoMostrar = textoDescifrado.slice(matchNick[0].length);
+                        }
                         mensajesDescifrados.push({
                             id: post.id,
-                            etiqueta: post.etiqueta,
+                            etiqueta: post.etiqueta, // se sobreescribe después si hay nick
+                            nickBase: nickBase,
                             color: post.color,
-                            texto: textoDescifrado,
+                            texto: textoMostrar,
                             fecha: post.fecha
                         });
                     }
@@ -349,19 +298,31 @@
                 document.getElementById('timeline').innerHTML = '<div style="padding: 20px; text-align: center; color: var(--color-terciario);">No se encontraron mensajes con esta semilla.</div>';
                 return;
             }
-            mensajesDescifrados.sort((a, b) => a.fecha - b.fecha);
+            // Ordenar ascendente para contar nicks correctamente
+            mensajesDescifrados.sort((a, b) => a.id - b.id);
+            const contadorNick = {};
+            mensajesDescifrados.forEach(msg => {
+                const baseNick = msg.nickBase || null;
+                if(baseNick) {
+                    contadorNick[baseNick] = (contadorNick[baseNick] || 0) + 1;
+                    msg.etiqueta = `${baseNick}.${String(contadorNick[baseNick]).padStart(2,'0')}@poste.ar`;
+                }
+            });
+            // Invertir para mostrar más nuevo arriba
+            mensajesDescifrados.reverse();
             const timeline = document.getElementById('timeline');
             timeline.innerHTML = '';
             mensajesDescifrados.forEach(msg => {
                 const postDiv = document.createElement('div');
                 postDiv.className = 'post';
                 const idAv = `av-${msg.id}`;
-                const fecha = new Date(msg.fecha);
                 const fechaStr = formatearFecha(msg.fecha);
+                const etiquetaSegura = escaparHTML(msg.etiqueta);
+                const colorSeguro = escaparHTML(msg.color);
                 postDiv.innerHTML = `
                     <div class="avatar" id="${idAv}"></div>
                     <div class="post-body">
-                        <div class="marca-tag" style="color: ${msg.color}">${msg.etiqueta}</div>
+                        <div class="marca-tag" style="color: ${colorSeguro}">${etiquetaSegura}</div>
                         <div class="fecha-tag">${fechaStr}</div>
                         <div style="white-space: pre-wrap; font-size: 15px;">${procesarTexto(msg.texto)}</div>
                     </div>
@@ -377,7 +338,7 @@
         const editor = document.getElementById('editor');
         const texto = editor.value.trim();
         if(!texto) {
-            mostrarToast('Escribí algo antes de postear', 'error');
+            alert('Escribí algo antes de postear');
             return;
         }
         postear(texto, null, null);
@@ -388,25 +349,24 @@
         const mantenerSemilla = document.getElementById('checkbox-mantener-semilla').checked;
         const texto = editor.value.trim();
         if(!texto) {
-            mostrarToast('Escribí algo antes de postear', 'error');
+            alert('Escribí algo antes de postear');
             return;
         }
         if(!password) {
-            mostrarToast('La semilla es obligatoria', 'error');
+            alert('La semilla es obligatoria para mensajes cifrados');
             return;
         }
         const palabras = password.split(/\s+/);
         if(palabras.length < 1 || palabras.length > 12) {
-            mostrarToast('Usá entre 1 y 12 palabras para la semilla', 'error');
+            alert('Usá entre 1 y 12 palabras para la semilla');
             return;
         }
-        const contenidoCifrado = CryptoJS.AES.encrypt(texto, password).toString();
+        const nick = document.getElementById('nick-encriptado-input').value.trim();
+        const textoFinal = nick ? `[${nick}] ${texto}` : texto;
+        const contenidoCifrado = CryptoJS.AES.encrypt(textoFinal, password).toString();
         console.log('Contenido cifrado:', contenidoCifrado);
         const payload = {
-            etiqueta: miMarca,
             contenido: '.',
-            color: miColor,
-            semilla: null,
             contenido_oculto: contenidoCifrado
         };
         try {
@@ -421,13 +381,13 @@
                     document.getElementById('password-encriptado-input').value = '';
                 }
                 document.getElementById('char-count-encriptado').innerText = "288 caracteres restantes";
-                mostrarToast('Mensaje cifrado publicado', 'ok');
+                alert('Mensaje cifrado publicado. Ingresá la semilla nuevamente para verlo.');
             } else {
-                mostrarToast('Error al postear', 'error');
+                alert('Error al postear');
             }
         } catch(e) {
             console.error('Error:', e);
-            mostrarToast('Error de conexión', 'error');
+            alert('Error de conexión');
         }
     }
     async function postear(textoPublico, textoOculto, password) {
@@ -436,10 +396,7 @@
             contenidoCifrado = CryptoJS.AES.encrypt(textoOculto, password).toString();
         }
         const payload = {
-            etiqueta: miMarca,
             contenido: textoPublico,
-            color: miColor,
-            semilla: null,
             contenido_oculto: contenidoCifrado
         };
         try {
@@ -455,11 +412,11 @@
                     await cargarTimeline();
                 }
             } else {
-                mostrarToast('Error al postear', 'error');
+                alert('Error al postear');
             }
         } catch(e) {
             console.error('Error:', e);
-            mostrarToast('Error de conexión', 'error');
+            alert('Error de conexión');
         }
     }
     function buscarConDelay() {
@@ -529,27 +486,7 @@
         container.style.backgroundColor = colorFondo;
         container.innerText = letras;
     }
-    function manejarCambioCheckboxes() {
-        const recordarUsuario = document.getElementById('checkbox-recordar-usuario');
-        const recordarPassword = document.getElementById('checkbox-recordar-password');
-        const usuarioDisplay = document.getElementById('login-usuario-guardado');
-        recordarUsuario.addEventListener('change', function() {
-            if(!this.checked) {
-                localStorage.removeItem('usuario-guardado');
-                usuarioDisplay.classList.add('hidden');
-            } else {
-                const usuarioGuardado = localStorage.getItem('usuario-guardado');
-                if(usuarioGuardado) {
-                    usuarioDisplay.classList.remove('hidden');
-                }
-            }
-        });
-        recordarPassword.addEventListener('change', function() {
-            if(!this.checked) {
-                localStorage.removeItem('password-guardado');
-            }
-        });
-    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const editor = document.getElementById('editor');
         const charCount = document.getElementById('char-count');
@@ -571,8 +508,7 @@
     window.onload = async () => {
         await cargarListaTemas();
         cargarTema();
-        verificarSesion();
         actualizarContadorReset();
         setInterval(actualizarContadorReset, 60000);
-        manejarCambioCheckboxes();
+        cargarTimeline();
     };
