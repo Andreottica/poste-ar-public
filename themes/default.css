@@ -143,7 +143,7 @@ header {
     font-size: 15px;
     white-space: pre-wrap;
     margin: 15px 0;
-    color: var(--color-principal);
+    color: #111111;
 }
 
 /* Textareas */
@@ -333,4 +333,3 @@ a {
 a:hover {
     text-decoration: underline;
 }
-
