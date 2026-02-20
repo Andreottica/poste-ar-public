@@ -57,12 +57,20 @@ let buscando = false;
         localStorage.setItem('modo', modoOscuro ? 'noche' : 'dia');
         cargarTema();
     }
-    function cerrarContacto() {
+    function cerrarTodo() {
+        // Cierra contacto
         document.getElementById('contacto-box').style.display = 'none';
         document.querySelector('.btn-contacto').innerText = '[ contacto ]';
+        // Cierra manual
+        document.getElementById('manual-box').style.display = 'none';
+        // Limpia timeline
+        document.getElementById('timeline').innerHTML = '';
+    }
+    function cerrarContacto() {
+        cerrarTodo();
     }
     function toggleModoApp() {
-        cerrarContacto();
+        cerrarTodo();
         if(modoApp === 'publico') {
             modoApp = 'encriptado';
             const btn = document.getElementById('btn-modo-app');
@@ -101,14 +109,10 @@ let buscando = false;
         return `${dia}-${mes} ${hora}:${min}hs`;
     }
 
-    function cerrarContacto() {
-        document.getElementById('contacto-box').style.display = 'none';
-        document.querySelector('.btn-contacto').innerText = '[ contacto ]';
-    }
     function toggleContacto() {
         const box = document.getElementById('contacto-box');
         const abierto = box.style.display === 'block';
-        document.getElementById('manual-box').style.display = 'none';
+        cerrarTodo();
         if(!abierto) {
             document.getElementById('editor-publico-section').classList.add('hidden');
             document.getElementById('editor-encriptado-section').classList.add('hidden');
@@ -162,9 +166,26 @@ let buscando = false;
         }
     }
     function toggleManual() {
-        cerrarContacto();
         const box = document.getElementById('manual-box');
-        if(box.style.display === 'block') { box.style.display = 'none'; return; }
+        const abierto = box.style.display === 'block';
+        cerrarTodo();
+        if(abierto) {
+            // estaba abierto, cerrarTodo ya lo cerró, restaurar editor
+            if(modoApp === 'publico') {
+                document.getElementById('editor-publico-section').classList.remove('hidden');
+                document.getElementById('search-input').classList.remove('hidden');
+                cargarTimeline();
+            } else {
+                document.getElementById('editor-encriptado-section').classList.remove('hidden');
+            }
+            return;
+        }
+        // abrir manual
+        document.getElementById('editor-publico-section').classList.add('hidden');
+        document.getElementById('editor-encriptado-section').classList.add('hidden');
+        document.getElementById('search-input').classList.add('hidden');
+        document.getElementById('search-info').classList.add('hidden');
+        document.getElementById('btn-volver').classList.add('hidden');
         fetch('postear.txt').then(r => r.text()).then(t => {
             box.innerText = t;
             box.style.display = 'block';
