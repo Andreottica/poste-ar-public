@@ -59,6 +59,7 @@ let buscando = false;
     }
     function cerrarContacto() {
         document.getElementById('contacto-box').style.display = 'none';
+        document.querySelector('.btn-contacto').innerText = '[ contacto ]';
     }
     function toggleModoApp() {
         cerrarContacto();
@@ -74,6 +75,7 @@ let buscando = false;
             document.getElementById('btn-volver').classList.add('hidden');
             document.getElementById('timeline').innerHTML = '<div style="padding: 20px; text-align: center; color: var(--color-terciario);">Ingresá una semilla para ver mensajes cifrados.</div>';
             semillaGlobalActiva = '';
+            document.body.classList.add('en-timeline');
         } else {
             modoApp = 'publico';
             const btn = document.getElementById('btn-modo-app');
@@ -85,6 +87,7 @@ let buscando = false;
             document.getElementById('semilla-leer-input').value = '';
             document.getElementById('checkbox-mantener-semilla').checked = false;
             semillaGlobalActiva = '';
+            document.body.classList.remove('en-timeline');
             cargarTimeline();
         }
     }
@@ -100,25 +103,28 @@ let buscando = false;
 
     function cerrarContacto() {
         document.getElementById('contacto-box').style.display = 'none';
+        document.querySelector('.btn-contacto').innerText = '[ contacto ]';
     }
     function toggleContacto() {
         const box = document.getElementById('contacto-box');
         const abierto = box.style.display === 'block';
-        cerrarContacto();
         document.getElementById('manual-box').style.display = 'none';
         if(!abierto) {
-            // cerrar ambos editores
             document.getElementById('editor-publico-section').classList.add('hidden');
             document.getElementById('editor-encriptado-section').classList.add('hidden');
             document.getElementById('search-input').classList.add('hidden');
             document.getElementById('search-info').classList.add('hidden');
             document.getElementById('btn-volver').classList.add('hidden');
+            document.getElementById('timeline').innerHTML = '';
             box.style.display = 'block';
+            document.querySelector('.btn-contacto').innerText = '[ volver ]';
         } else {
-            // al cerrar contacto, restaurar el modo actual
+            box.style.display = 'none';
+            document.querySelector('.btn-contacto').innerText = '[ contacto ]';
             if(modoApp === 'publico') {
                 document.getElementById('editor-publico-section').classList.remove('hidden');
                 document.getElementById('search-input').classList.remove('hidden');
+                cargarTimeline();
             } else {
                 document.getElementById('editor-encriptado-section').classList.remove('hidden');
             }
@@ -187,7 +193,10 @@ let buscando = false;
         if(dias > 0) texto += `${dias}d `;
         texto += `${horas}h ${minutos}m`;
         const contador = document.getElementById('contador-reset');
-        if(contador) contador.innerText = texto;
+        if(contador) {
+            contador.classList.remove('hidden');
+            contador.innerText = texto;
+        }
     }
     async function cargarTimeline() {
         if(modoApp === 'encriptado') return;
@@ -512,3 +521,247 @@ let buscando = false;
         setInterval(actualizarContadorReset, 60000);
         cargarTimeline();
     };
+
+    // ============================================
+    // MOBILE APP — navegación por pantallas
+    // ============================================
+    const esMobile = () => window.innerWidth <= 768;
+
+    let mPantallaActual = 'menu';
+
+    function mIrA(pantalla, callback) {
+        // ocultar todas
+        document.querySelectorAll('.m-pantalla').forEach(p => p.classList.add('m-oculta'));
+        // mostrar la pedida
+        const el = document.getElementById('m-pantalla-' + pantalla);
+        if (el) el.classList.remove('m-oculta');
+        mPantallaActual = pantalla;
+        // callback opcional al entrar
+        if (callback) callback();
+        // acciones especiales por pantalla
+        if (pantalla === 'timeline-publico') mActualizarPublico();
+        if (pantalla === 'manual') mCargarManual();
+    }
+
+    function mVolver() {
+        mIrA('menu');
+    }
+
+    // Actualizar timeline público mobile
+    async function mActualizarPublico() {
+        const timeline = document.getElementById('m-timeline-publico');
+        timeline.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-light);">cargando...</div>';
+        try {
+            const res = await fetch('/api/posts');
+            const posts = await res.json();
+            timeline.innerHTML = '';
+            if (!posts.length) {
+                timeline.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-light);">sin posteos aún.</div>';
+                return;
+            }
+            posts.forEach(p => {
+                // saltar posts cifrados (contenido solo '.')
+                if ((p.contenido || '').trim() === '.') return;
+                const div = document.createElement('div');
+                div.className = 'post';
+                div.innerHTML = `
+                    <div class="avatar" id="av-m-${p.id}"></div>
+                    <div class="post-body">
+                        <div class="marca-tag">${escaparHTML(p.etiqueta || '')}</div>
+                        <div class="fecha-tag">${formatearFecha(p.fecha)}</div>
+                        <div style="white-space:pre-wrap;">${procesarTexto(p.contenido || '')}</div>
+                    </div>`;
+                timeline.appendChild(div);
+                if (p.etiqueta && p.color) generateAvatarFromMarca(`av-m-${p.id}`, p.etiqueta, p.color);
+            });
+        } catch(e) {
+            timeline.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-light);">error al cargar.</div>';
+        }
+    }
+
+    // Buscar en timeline público mobile
+    let mBuscarTimer;
+    function mBuscarConDelay() {
+        clearTimeout(mBuscarTimer);
+        mBuscarTimer = setTimeout(mBuscar, 400);
+    }
+
+    async function mBuscar() {
+        const q = document.getElementById('m-search-input').value.trim();
+        const timeline = document.getElementById('m-timeline-publico');
+        const url = q ? `/api/buscar?q=${encodeURIComponent(q)}` : '/api/posts';
+        try {
+            const res = await fetch(url);
+            const posts = await res.json();
+            timeline.innerHTML = '';
+            posts.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'post';
+                div.innerHTML = `
+                    <div class="avatar" id="av-ms-${p.id}"></div>
+                    <div class="post-body">
+                        <div class="marca-tag">${escaparHTML(p.etiqueta || '')}</div>
+                        <div class="fecha-tag">${formatearFecha(p.fecha)}</div>
+                        <div style="white-space:pre-wrap;">${procesarTexto(p.contenido || '')}</div>
+                    </div>`;
+                timeline.appendChild(div);
+                if (p.etiqueta && p.color) generateAvatarFromMarca(`av-ms-${p.id}`, p.etiqueta, p.color);
+            });
+        } catch(e) {}
+    }
+
+    // Leer cifrados mobile
+    async function mLeerCifrados() {
+        const semilla = document.getElementById('m-semilla-leer-input').value.trim();
+        if (!semilla) { alert('Ingresá la semilla'); return; }
+        const timeline = document.getElementById('m-timeline-cifrado');
+        timeline.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-light);">descifrando...</div>';
+        try {
+            const res = await fetch('/api/posts');
+            const posts = await res.json();
+            const descifrados = [];
+            posts.forEach(p => {
+                if (!p.contenido_oculto) return;
+                try {
+                    const bytes = CryptoJS.AES.decrypt(p.contenido_oculto, semilla);
+                    const texto = bytes.toString(CryptoJS.enc.Utf8);
+                    if (texto && texto.length > 0) {
+                        let textoMostrar = texto;
+                        let nick = null;
+                        const matchNick = texto.match(/^\[([^\]]+)\]\s*/);
+                        if (matchNick) { nick = matchNick[1]; textoMostrar = texto.slice(matchNick[0].length); }
+                        descifrados.push({ id: p.id, etiqueta: nick || p.etiqueta, color: p.color, fecha: p.fecha, texto: textoMostrar });
+                    }
+                } catch(e) {}
+            });
+            if (!descifrados.length) {
+                timeline.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-light);">sin mensajes con esta semilla.</div>';
+                return;
+            }
+            descifrados.sort((a,b) => a.id - b.id).reverse();
+            timeline.innerHTML = '';
+            descifrados.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'post';
+                div.innerHTML = `
+                    <div class="avatar" id="av-mc-${m.id}"></div>
+                    <div class="post-body">
+                        <div class="marca-tag">${escaparHTML(m.etiqueta || '')}</div>
+                        <div class="fecha-tag">${formatearFecha(m.fecha)}</div>
+                        <div style="white-space:pre-wrap;">${procesarTexto(m.texto)}</div>
+                    </div>`;
+                timeline.appendChild(div);
+                if (m.etiqueta && m.color) generateAvatarFromMarca(`av-mc-${m.id}`, m.etiqueta, m.color);
+            });
+        } catch(e) {
+            timeline.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-light);">error al descifrar.</div>';
+        }
+    }
+
+    // Postear público mobile
+    async function mPostearPublico() {
+        const texto = document.getElementById('m-editor').value.trim();
+        if (!texto) { alert('Escribí algo antes de postear'); return; }
+        try {
+            const res = await fetch('/api/postear', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ contenido: texto })
+            });
+            if (res.ok) {
+                document.getElementById('m-editor').value = '';
+                document.getElementById('m-count-publico').textContent = '576';
+                mIrA('timeline-publico');
+            } else {
+                const data = await res.json();
+                alert(data.error || 'Error al postear');
+            }
+        } catch(e) { alert('Error de conexión'); }
+    }
+
+    // Postear cifrado mobile
+    async function mPostearCifrado() {
+        const texto = document.getElementById('m-editor-cifrado').value.trim();
+        const semilla = document.getElementById('m-semilla-escribir').value.trim();
+        const nick = document.getElementById('m-nick').value.trim();
+        if (!texto) { alert('Escribí un mensaje'); return; }
+        if (!semilla) { alert('Ingresá la semilla'); return; }
+        const textoFinal = nick ? `[${nick}] ${texto}` : texto;
+        const cifrado = CryptoJS.AES.encrypt(textoFinal, semilla).toString();
+        try {
+            const res = await fetch('/api/postear', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ contenido: '.', contenido_oculto: cifrado })
+            });
+            if (res.ok) {
+                document.getElementById('m-editor-cifrado').value = '';
+                document.getElementById('m-count-cifrado').textContent = '288';
+                // ir al timeline cifrado con la semilla precargada
+                document.getElementById('m-semilla-leer-input').value = semilla;
+                mIrA('timeline-cifrado');
+                mLeerCifrados();
+            } else {
+                const data = await res.json();
+                alert(data.error || 'Error al postear');
+            }
+        } catch(e) { alert('Error de conexión'); }
+    }
+
+    // Enviar contacto mobile
+    async function mEnviarContacto() {
+        const texto = document.getElementById('m-editor-contacto').value.trim();
+        if (!texto) { alert('Escribí un mensaje'); return; }
+        try {
+            const resSemilla = await fetch('/api/contacto-semilla');
+            const { semilla } = await resSemilla.json();
+            const cifrado = CryptoJS.AES.encrypt(`[contacto] ${texto}`, semilla).toString();
+            const res = await fetch('/api/postear', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ contenido: '.', contenido_oculto: cifrado })
+            });
+            if (res.ok) {
+                document.getElementById('m-editor-contacto').value = '';
+                document.getElementById('m-count-contacto').textContent = '576';
+                alert('Mensaje enviado al administrador.');
+                mIrA('timeline-cifrado');
+            } else {
+                alert('Error al enviar');
+            }
+        } catch(e) { alert('Error de conexión'); }
+    }
+
+    // Contador de caracteres mobile
+    function mContarChars(textarea, spanId, max) {
+        const restantes = max - textarea.value.length;
+        document.getElementById(spanId).textContent = restantes;
+    }
+
+    // Cargar manual mobile
+    function mCargarManual() {
+        const el = document.getElementById('m-manual-contenido');
+        if (el.innerHTML) return; // ya cargado
+        fetch('postear.txt').then(r => r.text()).then(t => { el.textContent = t; });
+    }
+
+    // Cambiar tema mobile
+    function mCambiarTema() {
+        cambiarTema();
+        const temas = ['default', 'retro'];
+        const actual = localStorage.getItem('tema') || 'default';
+        document.getElementById('m-btn-tema').textContent = `[ tema: ${actual} ]`;
+    }
+
+    // Inicializar mobile
+    if (esMobile()) {
+        // Sincronizar botón día/noche
+        document.addEventListener('DOMContentLoaded', () => {});
+        // Escuchar cambios de modo noche para actualizar botón
+        const origToggle = window.toggleDiaNoche;
+        window.toggleDiaNoche = function() {
+            origToggle && origToggle();
+            const btn = document.getElementById('m-btn-noche');
+            if (btn) btn.textContent = document.body.classList.contains('modo-noche') ? '[ noche ]' : '[ día ]';
+        };
+    }
