@@ -5,51 +5,52 @@ Ciudadela, Buenos Aires, Argentina.
 Todo se borra cada lunes a las 00:00 hs (hora argentina).
 
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+============================================
 QUÉ ES POSTE.AR
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+============================================
 
-Una red social donde el centro es el posteo, no el usuario.
+Una red social sin usuarios.
 
 No hay registro. No hay cuenta. No hay perfil.
 Entrás, publicás, leés. Sin dejar rastro.
 
-El sitio tiene dos espacios separados:
+El centro es el posteo, no quien postea.
 
-  [ encriptado → ]  Lleva al timeline cifrado (privado)
-  [ ← público ]     Vuelve al timeline público (abierto)
+
+DOS ESPACIOS
+------------
+
+  [ encriptado → ]  Timeline cifrado (privado, invisible)
+  [ ← público ]     Timeline público (abierto, visible para todos)
 
 
 TIMELINE PÚBLICO
 ----------------
-Cualquiera puede leer. Cualquiera puede escribir.
-No es para gente que te sigue o que seguís.
-Es un espacio abierto, como una pizarra pública.
+Una pizarra abierta. Cualquiera lee, cualquiera escribe.
+No hay seguidores ni seguidos.
 
-Cada posteo recibe una firma automática única:
+Cada posteo recibe una firma automática:
   reti.344@poste.ar
 
-Ese código identifica al posteo, no a la persona.
-Sirve para citar o referenciar un mensaje:
+Esa firma identifica al posteo, no a la persona.
+Sirve para citar o referenciar:
   "en reti.344@poste.ar se habla de esto..."
 
 
 TIMELINE CIFRADO
 ----------------
-Un canal invisible al timeline público.
-Solo existe para quien tenga las palabras semilla correctas.
+Un canal invisible para quienes no tengan la clave.
 
-La seguridad es la misma que usan los bancos
-y las transacciones de criptomonedas (AES-256).
+Los mensajes se cifran en tu navegador antes de salir.
+El servidor recibe texto ilegible. No puede leerlo.
+La clave (semilla) nunca sale de tu dispositivo.
 
-Como en las películas de espionaje: para leer un mensaje
-cifrado, el receptor necesita conocer la clave.
-Sin la clave, el mensaje no existe.
+Para quien no tiene la semilla, el canal no existe.
 
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+============================================
 CÓMO SE USA
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+============================================
 
 PUBLICAR EN EL TIMELINE PÚBLICO
 --------------------------------
@@ -57,12 +58,13 @@ PUBLICAR EN EL TIMELINE PÚBLICO
 2. Presioná [ postear ]
 3. Aparece en el timeline con su firma automática
 
+
 FORMATO DE TEXTO
 ----------------
-*texto*           → negrita
-_texto_           → cursiva
-<nombre:url.com>  → enlace clickeable
-#hashtag          → etiqueta destacada
+*texto*           -> negrita
+_texto_           -> cursiva
+<nombre:url.com>  -> enlace clickeable
+#hashtag          -> etiqueta destacada
 
 Ejemplo:
   Esto es *importante* y _urgente_.
@@ -73,9 +75,10 @@ BUSCAR
 ------
 El buscador filtra mensajes en toda la base.
 
-  Una palabra:       gato
-  Varias palabras:   gato, verde
-  No distingue mayúsculas/minúsculas.
+  Una palabra:      gato
+  Varias palabras:  gato, verde
+
+No distingue mayúsculas/minúsculas.
 
 
 PUBLICAR EN EL TIMELINE CIFRADO
@@ -83,7 +86,7 @@ PUBLICAR EN EL TIMELINE CIFRADO
 1. Presioná [ encriptado → ] para cambiar de modo
 2. Escribí tu mensaje (máximo 288 caracteres)
 3. Escribí tu semilla (la contraseña del canal)
-4. Opcionalmente, escribí un nick o seudónimo
+4. Opcionalmente, escribí un nick
 5. Presioná [ postear ]
 
 El mensaje se cifra en tu navegador antes de salir.
@@ -97,58 +100,71 @@ LEER MENSAJES CIFRADOS
 3. Aparecen todos los mensajes que coincidan con esa semilla
 
 Si la semilla es incorrecta, no aparece nada.
-No hay mensaje de error: simplemente no hay nada que mostrar.
+No hay error: simplemente no hay nada que mostrar.
 
 
-EL NICK O SEUDÓNIMO (timeline cifrado)
----------------------------------------
-Al postear en el timeline cifrado, podés escribir
-un nick en el campo "Tu nick". Es opcional.
+EL NICK (timeline cifrado)
+---------------------------
+Al postear cifrado, podés escribir un nick. Es opcional.
 
-Si escribís "pepe", tus mensajes aparecerán así:
-  pepe.01@poste.ar
-  pepe.02@poste.ar
-  pepe.03@poste.ar  (uno por cada posteo, en orden)
+Si escribís "ana", tus posteos aparecen así:
+  ana.01@poste.ar
+  ana.02@poste.ar
+  ana.03@poste.ar
 
 El nick viaja cifrado dentro del mensaje.
 El servidor nunca lo ve.
+Cualquiera puede usar el mismo nick: no es una identidad,
+es solo una referencia para ese momento.
 
-Si no escribís nick, el posteo muestra su firma automática.
 
-
-GRUPOS DE CHAT CIFRADOS
-------------------------
+GRUPOS CIFRADOS
+---------------
 Cuando varias personas usan la MISMA semilla,
 se forma un canal secreto compartido.
 
 Ejemplo con semilla "perro mesa luz":
-  - Ana publica con nick "ana"
-  - Carlos publica con nick "carlos"
-  - María publica sin nick
+  - Ana postea con nick "ana"
+  - Carlos postea con nick "carlos"
+  - María postea sin nick
 
 Al ingresar "perro mesa luz":
-  → Se ven TODOS los mensajes del grupo
-  → Con sus nicks: ana.01, carlos.01, etc.
-  → En orden cronológico inverso (el más nuevo arriba)
-  → Sin rastro en el timeline público
+  -> Se ven TODOS los mensajes del grupo
+  -> Con sus nicks: ana.01, carlos.01, etc.
+  -> En orden cronológico inverso
+  -> Sin rastro en el timeline público
 
-Para chatear en grupo: compartí las palabras semilla
+Para chatear en grupo: compartí la semilla
 solo con quienes quieras que lean el canal.
-Quien no las tenga, no puede acceder ni saber que existe.
+Quien no la tenga, no puede acceder ni saber que existe.
+
+La coordinación ocurre afuera del sitio.
+El sitio solo guarda texto opaco.
 
 
 HERRAMIENTAS
 ------------
-[ actualizar ]  → Carga los mensajes nuevos
-[ tema ]        → Cambia el estilo visual
-[ día / noche ] → Alterna modo claro/oscuro
-[ source ]      → Código fuente del sitio (GitHub)
-[ manual ]      → Este texto
+[ actualizar ]  -> Carga los mensajes nuevos
+[ tema ]        -> Cambia el estilo visual
+[ día / noche ] -> Alterna modo claro/oscuro
+[ source ]      -> Código fuente del sitio
+[ manual ]      -> Este texto
 
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+============================================
+PARA QUÉ PUEDE SERVIR
+============================================
+
+  - Dejar un mensaje público sin dar la cara
+  - Coordinar algo con un grupo sin app ni cuenta
+  - Hablar de algo sensible sin dejar registro
+  - Publicar algo que no necesita durar más de una semana
+  - Tener un canal privado que no existe para nadie más
+
+
+============================================
 ARQUITECTURA Y SEGURIDAD
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+============================================
 
 CÓMO FUNCIONA EL CIFRADO
 --------------------------
@@ -157,52 +173,51 @@ CÓMO FUNCIONA EL CIFRADO
 3. Se envía al servidor solo la versión cifrada
 4. El servidor guarda texto ilegible
 
-El descifrado también ocurre en el navegador,
-no en el servidor. La semilla nunca sale de tu dispositivo.
+El descifrado también ocurre en el navegador.
+La semilla nunca sale de tu dispositivo.
 
-Esto es diferente a WhatsApp, Telegram y la mayoría
-de las apps "seguras": en esas plataformas, la empresa
-conoce al menos tu número de teléfono o email.
-Acá no hay empresa que te conozca porque no hay
-ningún dato tuyo que llegue al servidor.
+La mayoría de las apps "seguras" conocen al menos
+tu número de teléfono o email.
+Acá no hay ningún dato tuyo que llegue al servidor.
+No porque lo prometamos: porque no hay forma técnica
+de que llegue.
 
 
 QUÉ GUARDA EL SERVIDOR
 ------------------------
-  ✓ Mensajes públicos (texto plano)
-  ✓ Mensajes cifrados (ilegibles para el servidor)
-  ✓ Firma automática del posteo (ej: reti.344@poste.ar)
-  ✓ Fecha y hora de publicación
+  + Mensajes públicos (texto plano)
+  + Mensajes cifrados (ilegibles para el servidor)
+  + Firma automática del posteo (ej: reti.344@poste.ar)
+  + Fecha y hora de publicación
 
 QUÉ NO GUARDA EL SERVIDOR
 ---------------------------
-  ✗ Semillas de mensajes
-  ✗ Nicks o seudónimos (van cifrados dentro del mensaje)
-  ✗ Direcciones IP
-  ✗ Datos del navegador
-  ✗ Cookies de rastreo
-  ✗ Ubicación
+  - Semillas
+  - Nicks (van cifrados dentro del mensaje)
+  - Direcciones IP
+  - Datos del navegador
+  - Cookies de rastreo
+  - Ubicación
 
 
 LA FIRMA AUTOMÁTICA
 --------------------
-Cada posteo recibe un identificador único generado
+Cada posteo recibe un identificador generado
 por el servidor a partir de un contador interno:
 
-  silaba.número@poste.ar   →   reti.344@poste.ar
+  silaba.numero@poste.ar   ->   reti.344@poste.ar
 
-La sílaba es determinística (siempre la misma para ese ID).
+La sílaba es determinística para ese ID.
 El número nunca supera 999.
-La combinación es única e irrepetible para cada posteo.
+La combinación es única para cada posteo.
 
 No identifica a la persona. Solo al posteo.
 
 
 PURGA SEMANAL
 -------------
-Todos los mensajes (públicos y cifrados) se borran
-automáticamente cada lunes a las 00:00 hs (Argentina).
-Máxima vida de un mensaje: 7 días.
+Todos los mensajes se borran cada lunes a las 00:00 hs
+(hora argentina). Máxima vida de un mensaje: 7 días.
 No hay forma de recuperarlos después del borrado.
 
 
@@ -210,7 +225,7 @@ LÍMITES
 -------
   Mensaje público:   576 caracteres
   Mensaje cifrado:   288 caracteres
-  Semilla:           1 a 12 palabras (más palabras = más seguridad)
+  Semilla:           1 a 12 palabras (más palabras = más seguro)
   Nick:              hasta 20 caracteres
 
 No se pueden editar ni borrar mensajes antes del lunes.
@@ -219,16 +234,16 @@ Solo texto. No se aceptan imágenes, videos ni archivos.
 
 STACK TÉCNICO
 -------------
-  Frontend:   HTML, CSS, JavaScript vanilla
+  Frontend:   HTML, CSS, JavaScript (sin frameworks)
   Backend:    Node.js + Express
   Base datos: SQL relacional en servidor remoto
   Cifrado:    AES-256 y SHA-256 (lado cliente)
-  Hosting:    Servidor en la nube con CDN y proxy de seguridad
+  Hosting:    Nube con CDN y proxy de seguridad
 
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+============================================
 USO RESPONSABLE Y AVISO LEGAL
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+============================================
 
 poste.ar es una herramienta de comunicación anónima
 de código abierto, disponible para su uso libre.
