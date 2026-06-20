@@ -39,7 +39,7 @@ Avisos públicos de trueque. Solo lectura — para publicar, entrás a mm y escr
 
 - **Frontend:** HTML, CSS, JavaScript vanilla — sin frameworks
 - **Backend:** Node.js + Express
-- **Base de datos:** Turso (libSQL / SQLite)
+- **Base de datos:** xxxxx (libSQL / SQLite)
 - **Cifrado:** ECDH P-256 + AES-GCM 256 (noble-curves)
 - **CDN / Proxy:** Cloudflare
 - **Hosting frontend:** poste.ar (dominio propio)
