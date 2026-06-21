@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>poste.ar 24/7</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #fff; color: #111;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 15px; max-width: 640px;
+      margin: 0 auto; padding: 24px 16px;
+    }
+    @media (max-width: 600px) {
+      body { font-size: 13px; padding: 12px 10px; letter-spacing: -0.3px; }
+      h1 { font-size: 18px; }
+      p { line-height: 1.4; color: #333; }
+      .tagline { font-size: 13px; color: #444; }
+      .micrositios { flex-direction: column; gap: 16px; padding: 12px 0; }
+      .micrositio { text-align: left; }
+      .micrositio-sub { font-size: 12px; color: #666; }
+      .acceso-directo { font-size: 12px; color: #666; }
+      .descargas h2 { font-size: 13px; color: #444; }
+      .proximamente { font-size: 12px; color: #666; }
+      .manual-seccion p { font-size: 13px; color: #333; }
+      .manual-seccion ul li { font-size: 13px; color: #333; }
+      .firma { font-size: 12px; color: #666; }
+    }
+    /* noche */
+    body.noche { background: #111; color: #ccc; transition: background 0.2s, color 0.2s; }
+    body.noche header { border-bottom-color: #333; }
+    body.noche .tagline { color: #aaa; }
+    body.noche p { color: #ccc; }
+    body.noche .micrositios { border-color: #333; }
+    body.noche .micrositio-sub { color: #888; }
+    body.noche .acceso-directo { color: #777; }
+    body.noche .descargas h2 { color: #aaa; }
+    body.noche .btn-descarga { border-color: #444; color: #888; }
+    body.noche .proximamente { color: #777; }
+    body.noche .btn-manual { color: #6ab0f5; }
+    body.noche #manual { border-top-color: #333; }
+    body.noche .manual-indice a { color: #6ab0f5; }
+    body.noche .manual-seccion h3 { color: #ddd; border-bottom-color: #333; }
+    body.noche .manual-seccion p { color: #ccc; }
+    body.noche .manual-seccion ul li { color: #ccc; }
+    body.noche hr { border-top-color: #333; }
+    body.noche .firma { color: #777; }
+    body.noche .btn-cerrar-manual { color: #777; }
+    header { border-bottom: 2px solid #ddd; padding-bottom: 12px; margin-bottom: 20px; }
+    h1 { font-size: 22px; letter-spacing: -1px; }
+    .r { color: #c00; }
+    .tagline { font-size: 12px; color: #555; margin-top: 4px; }
+
+    p { line-height: 1.7; margin-bottom: 16px; color: #333; }
+
+    /* ── Links de micro-sitios ── */
+    .micrositios {
+      display: flex; justify-content: space-between;
+      margin: 24px 0 8px 0; border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd; padding: 16px 0;
+    }
+    .micrositio { text-align: center; }
+    .micrositio a {
+      font-size: 14px; font-weight: bold; text-decoration: none;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .micrositio-sub { font-size: 11px; color: #999; margin-top: 4px; }
+    .pp a { color: #6ab0f5; }
+    .mm a { color: #e8620a; }
+    .tt a { color: #2e7d32; }
+
+    .acceso-directo { font-size: 11px; color: #999; margin-bottom: 24px; }
+
+    /* ── Descargas ── */
+    .descargas { margin-bottom: 24px; }
+    .descargas h2 { font-size: 13px; color: #555; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .descarga-lista { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+    .btn-descarga {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px; color: #111; border: 1px solid #ccc;
+      padding: 5px 12px; text-decoration: none; cursor: not-allowed;
+      opacity: 0.5;
+    }
+    .proximamente { font-size: 11px; color: #999; }
+
+    /* ── Botón manual ── */
+    .btn-manual { 
+      background: none; border: none; font-family: inherit;
+      font-size: 13px; color: #00c; text-decoration: underline;
+      cursor: pointer; padding: 0;
+    }
+    .btn-manual:hover { color: #006; }
+    .botones-index { display: flex; gap: 16px; align-items: baseline; margin-bottom: 24px; }
+    .btn-dn-index {
+      background: none; border: none; font-family: inherit;
+      font-size: 11px; color: #999; cursor: pointer; padding: 0;
+      text-decoration: none;
+    }
+    .btn-dn-index:hover { color: #111; }
+    body.noche .btn-dn-index { color: #aaa; }
+    body.noche .btn-dn-index:hover { color: #ddd; }
+
+    /* ── Manual ── */
+    #manual { display: none; border-top: 2px solid #ddd; padding-top: 20px; margin-top: 8px; }
+    #manual h2 {
+      font-size: 15px; letter-spacing: -0.5px;
+      margin-bottom: 16px; margin-top: 4px;
+    }
+    .manual-indice { margin-bottom: 24px; }
+    .manual-indice a {
+      display: block; color: #00c; text-decoration: underline;
+      font-size: 13px; margin-bottom: 6px;
+    }
+    .manual-indice a:hover { color: #006; }
+    .manual-seccion { margin-bottom: 28px; }
+    .manual-seccion h3 {
+      font-size: 13px; font-weight: bold;
+      margin-bottom: 10px; color: #111;
+      border-bottom: 1px solid #eee; padding-bottom: 4px;
+    }
+    .manual-seccion p { font-size: 13px; margin-bottom: 10px; }
+    .manual-seccion ul { padding-left: 16px; margin-bottom: 10px; }
+    .manual-seccion ul li { font-size: 13px; line-height: 1.7; }
+    .btn-cerrar-manual {
+      background: none; border: none; font-family: inherit;
+      font-size: 12px; color: #999; text-decoration: underline;
+      cursor: pointer; padding: 0; margin-top: 8px;
+    }
+    .btn-cerrar-manual:hover { color: #111; }
+    .volver {
+      display: inline-block; margin-top: 10px;
+      font-size: 12px; color: #00c; text-decoration: underline;
+    }
+    .volver:hover { color: #006; }
+    body.noche .volver { color: #6ab0f5; }
+
+    hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
+    .firma { font-size: 11px; color: #999; margin-top: 24px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>poste.ar <span class="r">24/7</span></h1>
+  <div class="tagline">red minimalista · sin registro · todo se borra cada lunes</div>
+</header>
+
+<p>poste.ar es una red sin datos personales. Podés publicar en un timeline público, enviarte mensajes privados cifrados con otro usuario, o publicar y leer avisos de trueque. Sin registro obligatorio, sin cookies, sin IPs guardadas. Todo se borra los lunes a las 00:00 hs hora Argentina.</p>
+
+<p>Si querés mensajes privados o trueque, creás un seudónimo con 12 palabras semilla — esa es tu única contraseña, el sistema no sabe nada más de vos. Los mensajes salen cifrados de tu dispositivo: aunque se hackeara el servidor, solo encontrarían texto ilegible.</p>
+
+<div class="micrositios">
+  <div class="micrositio pp">
+    <a href="/public">poste.ar 24/7 pp</a>
+    <div class="micrositio-sub">timeline público</div>
+  </div>
+  <div class="micrositio mm">
+    <a href="/micro">poste.ar 24/7 mm</a>
+    <div class="micrositio-sub">mensajes privados</div>
+  </div>
+  <div class="micrositio tt">
+    <a href="/trueque">poste.ar 24/7 tt</a>
+    <div class="micrositio-sub">avisos de trueque</div>
+  </div>
+</div>
+
+<p class="acceso-directo">podés ir directamente a cualquiera de estas direcciones sin pasar por acá</p>
+
+<div class="descargas">
+  <h2>aplicaciones de consola</h2>
+  <div class="descarga-lista">
+    <a class="btn-descarga" href="#" onclick="return false;">postear.public.py</a>
+    <a class="btn-descarga" href="#" onclick="return false;">postear.micro.py</a>
+    <a class="btn-descarga" href="#" onclick="return false;">postear.trueque.py</a>
+  </div>
+  <div class="proximamente">por ahora solo Linux · próximamente Mac y Windows</div>
+</div>
+
+<div class="botones-index">
+  <button class="btn-manual" onclick="toggleManual()">[ manual ]</button>
+  <button class="btn-dn-index" onclick="toggleDN()">[d/n]</button>
+  <a class="btn-dn-index" href="https://github.com/tu-usuario/tu-repo" target="_blank" rel="noopener noreferrer">[source]</a>
+</div>
+
+<div id="manual">
+  <h2>manual</h2>
+
+  <div class="manual-indice" id="m-indice">
+    <a href="#m-que-es">qué es poste.ar</a>
+    <a href="#m-pp">pp · timeline público</a>
+    <a href="#m-mm">mm · mensajes privados</a>
+    <a href="#m-tt">tt · trueque</a>
+    <a href="#m-identidad">tu identidad</a>
+    <a href="#m-privacidad">privacidad y seguridad</a>
+    <a href="#m-manifiesto">manifiesto</a>
+    <a href="#m-terminos">términos de uso</a>
+  </div>
+
+  <div class="manual-seccion" id="m-que-es">
+    <h3>qué es <strong style="color:#00c">poste.ar</strong></h3>
+    <p>Una red minimalista sin datos personales. Tres secciones independientes: un timeline público, mensajes privados cifrados, y avisos de trueque. Todo se borra los lunes a las 00:00 hs hora Argentina.</p>
+    <p>No hay algoritmos, no hay publicidad, no hay perfil. Lo que escribís desaparece en menos de una semana.</p>
+    <a href="#m-indice" class="volver">[volver]</a>
+  </div>
+
+  <div class="manual-seccion" id="m-pp">
+    <h3>pp · timeline público</h3>
+    <p>Escribís y leés sin usuario. Anónimo total. Podés usar <strong>*negrita*</strong> e <em>_cursiva_</em> con asteriscos y guiones bajos. Máximo 500 caracteres.</p>
+    <ul>
+      <li>El botón <strong>[actualizar]</strong> trae los posts más recientes.</li>
+      <li>El buscador filtra localmente, sin consultar el servidor.</li>
+    </ul>
+    <a href="#m-indice" class="volver">[volver]</a>
+  </div>
+
+  <div class="manual-seccion" id="m-mm">
+    <h3>mm · mensajes privados</h3>
+    <p>Mensajes cifrados de extremo a extremo. Para usarlo necesitás un seudónimo.</p>
+    <ul>
+      <li>Elegís un nick y el sistema genera 12 palabras semilla — esa es tu contraseña.</li>
+      <li>Anotalas: si las perdés, perdés el acceso. No hay recuperación posible.</li>
+      <li>Los mensajes se cifran en tu dispositivo antes de salir. El servidor no puede leerlos.</li>
+      <li>Para publicar un aviso de trueque, escribí a <strong>trueque@</strong> — aparecerá en tt.</li>
+    </ul>
+    <p>Máximo 500 caracteres por mensaje.</p>
+    <a href="#m-indice" class="volver">[volver]</a>
+  </div>
+
+  <div class="manual-seccion" id="m-tt">
+    <h3>tt · trueque</h3>
+    <p>Avisos públicos de trueque. Solo lectura — para publicar un aviso entrás a mm y escribís a <strong>trueque@</strong>.</p>
+    <ul>
+      <li>Hacé click en el nick del autor de un aviso para escribirle directamente.</li>
+      <li>El buscador filtra los avisos por palabra clave.</li>
+    </ul>
+    <a href="#m-indice" class="volver">[volver]</a>
+  </div>
+
+  <div class="manual-seccion" id="m-identidad">
+    <h3>tu identidad</h3>
+    <p>Si usás pp, sos completamente anónimo. Si usás mm o tt, creás un seudónimo:</p>
+    <ul>
+      <li>Elegís un nick (letras minúsculas, números y punto).</li>
+      <li>El sistema genera 12 palabras semilla únicas — son tu clave criptográfica.</li>
+      <li>Guardalas en papel o en un lugar seguro. Son lo único que necesitás para entrar.</li>
+      <li>El mismo nick y semillas funcionan en mm y en tt.</li>
+    </ul>
+    <a href="#m-indice" class="volver">[volver]</a>
+  </div>
+
+  <div class="manual-seccion" id="m-privacidad">
+    <h3>privacidad y seguridad</h3>
+    <ul>
+      <li>El servidor no guarda cookies ni direcciones IP.</li>
+      <li>Los mensajes privados se cifran con criptografía ECDH + AES-GCM — la misma tecnología que usan los bancos y blockchain.</li>
+      <li>Si el servidor fuera hackeado, solo encontrarían texto cifrado ilegible.</li>
+      <li>El código es auditable: abrí F12 en tu navegador.</li>
+      <li>En internet no existe el anonimato total — pero <strong style="color:#00c">poste.ar</strong> hace todo lo posible para no saber nada de vos.</li>
+    </ul>
+    <a href="#m-indice" class="volver">[volver]</a>
+  </div>
+
+  <div class="manual-seccion" id="m-manifiesto">
+    <h3>manifiesto</h3>
+    <p>Este es un espacio opuesto a la tendencia extractiva actual. <strong style="color:#00c">poste.ar</strong> no te pide nada. Lo que importa es lo que querés decir, no quién sos.</p>
+    <p>Todo se borra los lunes. Lo efímero es una decisión: obliga a que lo que circula tenga valor ahora, no que se acumule.</p>
+    <p>El código está íntegramente escrito por Claude de Anthropic. El desarrollo fue una conversación de varios meses sobre arquitectura, minimalismo y privacidad.</p>
+    <hr>
+    <p>Sitio creado por <strong>andreottica@</strong> en <strong style="color:#00c">poste.ar</strong><br>
+    Código escrito con Claude de Anthropic<br>
+    Contacto y soporte: <strong>administrador@</strong><br>
+    Ciudadela, Buenos Aires, Argentina · 2026</p>
+    <a href="#m-indice" class="volver">[volver]</a>
+  </div>
+
+  <div class="manual-seccion" id="m-terminos">
+    <h3>términos de uso</h3>
+    <p><strong style="color:#00c">poste.ar</strong> no se responsabiliza por el contenido publicado por los usuarios. El sitio es anónimo por diseño — cada persona es responsable de lo que escribe.</p>
+    <ul>
+      <li>No uses el sitio para infringir la ley.</li>
+      <li>No insultes ni discrimines. El sitio es anónimo, así que debatí con ideas, no hay a quién atacar personalmente.</li>
+      <li>El código es open source. Podés usarlo y modificarlo libremente citando al autor original: <strong>andreottica@</strong></li>
+      <li>Si el sitio te resulta útil, cuidalo.</li>
+    </ul>
+    <a href="#m-indice" class="volver">[volver]</a>
+  </div>
+
+  <button class="btn-cerrar-manual" onclick="toggleManual()">[ cerrar manual ]</button>
+</div>
+
+<div class="firma">poste.ar · Ciudadela, Buenos Aires · 2026</div>
+
+<script>
+function toggleDN() {
+  document.body.classList.toggle('noche');
+  localStorage.setItem('dn', document.body.classList.contains('noche') ? '1' : '0');
+}
+if (localStorage.getItem('dn') === '1') document.body.classList.add('noche');
+window.addEventListener("storage", e => { if (e.key === "dn") { document.body.classList.toggle("noche", e.newValue === "1"); } });
+
+function toggleManual() {
+  const m = document.getElementById('manual');
+  const abierto = m.style.display === 'block';
+  m.style.display = abierto ? 'none' : 'block';
+  if (!abierto) m.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
