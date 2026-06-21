@@ -528,8 +528,8 @@ async function renderMensajes() {
       const remitente = m.etiqueta ? m.etiqueta.split('@')[0] : '?';
       const dest = m.etiqueta ? (m.etiqueta.split('@ ')[1] || '') : '';
       const quien = esEnviado
-        ? `enviado a: <span style="color:#111;font-weight:bold">${dest}@</span>`
-        : `recibido de: <span style="color:#111;font-weight:bold;cursor:pointer;text-decoration:underline" onclick="responder('${remitente}')">${remitente}@</span>`;
+        ? `<span style="color:#3a8fd1;font-weight:bold">${_nick}@ &gt;&gt;</span> <span style="color:#e8a030;font-weight:bold">${dest}@</span>`
+        : `<span style="color:#e8a030;font-weight:bold;cursor:pointer;text-decoration:underline" onclick="responder('${remitente}')">${remitente}@ &gt;&gt;</span> <span style="color:#3a8fd1;font-weight:bold">${_nick}@</span>`;
       html += `<div class="mensaje">
         <span class="mensaje-meta">${quien} · ${formatFecha(m.fecha)}</span>
         <div class="mensaje-cuerpo">${renderTexto(texto)}</div>
