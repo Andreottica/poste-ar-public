@@ -1,1 +1,661 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>poste.ar 24/7 mm</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #fff; color: #111;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 15px; max-width: 640px;
+      margin: 0 auto; padding: 24px 16px;
+    }
+    @media (max-width: 600px) {
+      body { font-size: 14px; padding: 12px 10px; letter-spacing: -0.3px; }
+      h1 { font-size: 19px; }
+      .mensaje-cuerpo { line-height: 1.3; }
+      .tagline { font-size: 13px; color: #444; }
+      #estado { font-size: 12px; color: #555; }
+      .meta, .mensaje-meta { font-size: 13px; }
+      .panel h2 { font-size: 14px; color: #444; }
+      label { font-size: 13px; color: #555; }
+      .nick-estado { font-size: 12px; }
+      #charcount { font-size: 12px; color: #666; }
+      .vacio { font-size: 14px; color: #666; }
+      .tab { font-size: 14px; }
+    }
+    /* noche */
+    body.noche { background: #111; color: #ddd; transition: background 0.2s, color 0.2s; }
+    body.noche header { border-bottom-color: #444; }
+    body.noche .tagline { color: #ccc; }
+    body.noche #estado { color: #bbb; }
+    body.noche input[type=text], body.noche input[type=password], body.noche textarea { background: #1a1a1a; color: #ddd; border-color: #333; }
+    body.noche input:focus, body.noche textarea:focus { border-color: #555; }
+    body.noche button { background: #ddd; color: #111; }
+    body.noche button:hover { background: #bbb; }
+    body.noche button:disabled { background: #444; color: #777; }
+    body.noche .btn-sec { background: #1a1a1a; color: #ddd; border-color: #444; }
+    body.noche .btn-sec:hover { background: #222; }
+    body.noche .btn-peligro { background: #1a1a1a; color: #e8620a; border-color: #444; }
+    body.noche .btn-peligro:hover { background: #1e1e1e; }
+    body.noche .btn-dn { border-color: #444; color: #666; background: none; }
+    body.noche .btn-dn:hover { background: #222; color: #ddd; }
+    body.noche .panel { border-color: #333; }
+    body.noche .panel h2 { color: #bbb; }
+    body.noche .semillas-display { background: #1a1a1a; color: #ccc; }
+    body.noche label { color: #aaa; }
+    body.noche .tabs { border-bottom-color: #333; }
+    body.noche .tab { color: #aaa; background: none; }
+    body.noche .tab.activo { color: #ddd; border-bottom-color: #ddd; background: none; }
+    body.noche .tab:hover { color: #aaa; background: none; }
+    body.noche .mensaje { border-bottom-color: #333; }
+    body.noche .mensaje-meta { color: #e8620a; }
+    body.noche #nick-display { color: #bbb; }
+    body.noche #nick-display strong { color: #ddd; }
+    body.noche .vacio { color: #aaa; }
+    body.noche a { color: #6ab0f5; }
+    body.noche #charcount { color: #aaa; }
+    body.noche .login-sesiones button { background: #1a1a1a; color: #ddd; border-color: #444; }
+    header { border-bottom: 2px solid #ddd; padding-bottom: 12px; margin-bottom: 20px; }
+    h1 { font-size: 22px; letter-spacing: -1px; }
+    .naranja { color: #e8620a; }
+    .mm { color: #999; font-size: 0.72em; font-weight: normal; letter-spacing: 2px; margin-left: 10px; }
+    .tagline { font-size: 12px; color: #555; margin-top: 4px; }
+    #estado { font-size: 11px; color: #999; margin-top: 4px; min-height: 16px; }
 
+    #pantalla-login { }
+    #pantalla-app { display: none; }
+
+    .panel { border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; }
+    .panel h2 { font-size: 13px; letter-spacing: -0.5px; margin-bottom: 12px; color: #555; }
+
+    label { font-size: 12px; color: #777; display: block; margin-bottom: 4px; }
+    input[type=text], input[type=password], textarea {
+      width: 100%; border: 1px solid #ddd; padding: 6px 8px;
+      font-family: inherit; font-size: 14px; outline: none; margin-bottom: 10px;
+      resize: vertical;
+    }
+    input:focus, textarea:focus { border-color: #aaa; }
+
+    .semillas-display {
+      font-size: 12px; background: #f5f5f5; padding: 10px;
+      margin-bottom: 8px; line-height: 1.8; word-break: break-word;
+      min-height: 40px; color: #333;
+    }
+
+    .error { font-size: 12px; color: #c00; margin-bottom: 8px; display: none; }
+    .nick-estado { font-size: 11px; margin-bottom: 8px; }
+
+    .botones { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+    button {
+      background: #111; color: #fff; border: none;
+      padding: 7px 18px; font-family: inherit; font-size: 14px; cursor: pointer;
+    }
+    button:hover { background: #333; }
+    button:disabled { background: #999; cursor: default; }
+    .btn-sec { background: #fff; color: #111; border: 1px solid #ccc; }
+    .btn-sec:hover { background: #f5f5f5; }
+    .btn-peligro { background: #fff; color: #c00; border: 1px solid #ccc; }
+    .btn-peligro:hover { background: #fff5f5; }
+
+    #nick-display { font-size: 13px; color: #555; margin-bottom: 16px; }
+    #nick-display strong { color: #111; }
+
+    .tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid #ddd; }
+    .tab {
+      background: none; border: none; padding: 8px 16px;
+      font-family: inherit; font-size: 13px; cursor: pointer;
+      color: #777; border-bottom: 2px solid transparent; margin-bottom: -2px;
+    }
+    .tab.activo { color: #111; border-bottom: 2px solid #111; font-weight: bold; }
+    .tab:hover { color: #333; background: none; }
+
+    #form-enviar { margin-bottom: 24px; }
+    #charcount { font-size: 11px; color: #999; text-align: right; margin-bottom: 8px; }
+    #charcount.over { color: #c00; }
+
+    .mensaje { border-bottom: 1px solid #bbb; padding: 10px 0; }
+    .mensaje-meta { font-size: inherit; color: #e8620a; display: block; margin-bottom: 4px; }
+    .mensaje-cuerpo { line-height: 1.5; word-break: break-word; }
+    .mensaje-cuerpo strong { font-weight: bold; }
+    .mensaje-cuerpo em { font-style: italic; }
+    .mensaje-acciones { margin-top: 6px; }
+    .mensaje-acciones button {
+      font-size: 11px; padding: 2px 8px;
+      background: #fff; color: #c00; border: 1px solid #ccc;
+    }
+    .mensaje-acciones button:hover { background: #f5f5f5; }
+    .vacio { color: #999; font-size: 13px; padding: 16px 0; }
+    a { color: #00c; text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>poste.ar <span class="naranja">24/7 mm</span><span class="mm">micro mail</span></h1>
+  <div class="tagline">mensajes privados cifrados · se borra cada lunes</div>
+  <div id="estado"></div>
+</header>
+
+<!-- LOGIN -->
+<div id="pantalla-login">
+  <div id="login-sesiones" style="margin-bottom:16px;"></div>
+
+  <div id="login-menu">
+    <div class="botones">
+      <button onclick="mostrarPanel('nuevo')">nuevo usuario</button>
+      <button class="btn-sec" onclick="mostrarPanel('existente')">ya tengo cuenta</button>
+    </div>
+  </div>
+
+  <div id="panel-nuevo" class="panel" style="display:none;">
+    <h2>nuevo usuario</h2>
+    <label>nick (minúsculas, números y punto)</label>
+    <input id="nick-nuevo" type="text" placeholder="tu.nick" maxlength="30" oninput="chequearNick(this.value)">
+    <div id="nick-estado" class="nick-estado"></div>
+    <label>tus 12 palabras semilla — guardalas, son tu contraseña</label>
+    <div class="semillas-display" id="semillas-display">—</div>
+    <div class="botones">
+      <button class="btn-sec" onclick="generarSemillas()">generar palabras</button>
+      <button class="btn-sec" id="btn-copiar" style="display:none" onclick="copiarSemillas()">[ copiar ]</button>
+    </div>
+    <div id="error-nuevo" class="error"></div>
+    <div class="botones">
+      <button onclick="registrar()">registrar</button>
+      <button class="btn-sec" onclick="mostrarPanel('menu')">volver</button>
+    </div>
+  </div>
+
+  <div id="panel-existente" class="panel" style="display:none;">
+    <h2>entrá con tu cuenta</h2>
+    <label>nick</label>
+    <input id="nick-existente" type="text" placeholder="tu.nick" maxlength="30">
+    <label>12 palabras semilla</label>
+    <textarea id="semillas-input" rows="3" placeholder="palabra1 palabra2 ... palabra12"></textarea>
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+      <input type="checkbox" id="chk-recordar"> recordar en este dispositivo
+    </label>
+    <div style="margin-bottom:10px;"></div>
+    <div id="error-existente" class="error"></div>
+    <div class="botones">
+      <button onclick="entrar()">entrar</button>
+      <button class="btn-sec" onclick="mostrarPanel('menu')">volver</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="pantalla-app">
+  <div id="nick-display"></div>
+  <div class="tabs">
+    <button class="tab activo" onclick="irTab('escribir')">escribir</button>
+    <button class="tab" onclick="irTab('recibidos')">recibidos</button>
+    <button class="tab" onclick="irTab('enviados')">enviados</button>
+  </div>
+
+  <div id="tab-escribir">
+    <div id="form-enviar">
+      <label>para (nick del destinatario)</label>
+      <input id="destinatario" type="text" placeholder="nick.destino" maxlength="30">
+      <label>mensaje (máx. 500 caracteres)</label>
+      <textarea id="editor" rows="4" placeholder="escribí tu mensaje"></textarea>
+      <div id="charcount">0 / 500</div>
+      <div class="botones">
+        <button id="btn-enviar" disabled onclick="enviarMensaje()">enviar</button>
+        <button class="btn-peligro" onclick="salir()">salir</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-recibidos" style="display:none;">
+    <div class="botones" style="margin-bottom:16px;">
+      <button class="btn-sec" onclick="cargarMensajes()">actualizar</button>
+      <button class="btn-peligro" onclick="salir()">salir</button>
+    </div>
+    <div id="lista-recibidos"><div class="vacio">cargando...</div></div>
+  </div>
+
+  <div id="tab-enviados" style="display:none;">
+    <div class="botones" style="margin-bottom:16px;">
+      <button class="btn-sec" onclick="cargarMensajes()">actualizar</button>
+      <button class="btn-peligro" onclick="salir()">salir</button>
+    </div>
+    <div id="lista-enviados"><div class="vacio">cargando...</div></div>
+  </div>
+</div>
+
+<script src="/noble-p256.js"></script>
+<script src="/palabras.js"></script>
+<script src="/crypto.js"></script>
+<script>
+let _nick = null, _semillas = null, _clavePrivada = null;
+let _semillasGeneradas = null, _nickTimer = null, _mensajes = [];
+
+// d/n
+function toggleDN() {
+  document.body.classList.toggle('noche');
+  localStorage.setItem('dn', document.body.classList.contains('noche') ? '1' : '0');
+}
+if (localStorage.getItem('dn') === '1') document.body.classList.add('noche');
+window.addEventListener("storage", e => { if (e.key === "dn") { document.body.classList.toggle("noche", e.newValue === "1"); } });
+
+const estado = document.getElementById('estado');
+
+function setEstado(msg, color) {
+  estado.textContent = msg;
+  estado.style.color = color || '#999';
+}
+function sanitize(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function renderTexto(raw) {
+  return sanitize(raw)
+    .replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
+    .replace(/\*([^*]+)\*/g,'<strong>$1</strong>')
+    .replace(/_([^_]+)_/g,'<em>$1</em>');
+}
+function formatFecha(f) { return f ? f.slice(0,16).replace('T',' ') : ''; }
+
+// ── Fingerprint MITM ──
+async function _calcularFingerprint(clavePublicaStr) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(clavePublicaStr));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+function _obtenerFingerprint(nick) {
+  try { return JSON.parse(localStorage.getItem('mm_fp') || '{}')[nick] || null; } catch { return null; }
+}
+function _guardarFingerprint(nick, fp) {
+  try {
+    const fps = JSON.parse(localStorage.getItem('mm_fp') || '{}');
+    fps[nick] = fp;
+    localStorage.setItem('mm_fp', JSON.stringify(fps));
+  } catch {}
+}
+async function _verificarFingerprint(nick, clavePublicaStr) {
+  const fpGuardado = _obtenerFingerprint(nick);
+  const fpActual = await _calcularFingerprint(clavePublicaStr);
+  if (!fpGuardado) { _guardarFingerprint(nick, fpActual); return; }
+  if (fpActual !== fpGuardado) {
+    throw new Error('ALERTA: la clave pública cambió. Posible ataque. No continués.');
+  }
+}
+
+// ── Sesiones ──
+function sesionesGuardadas() {
+  try { return JSON.parse(localStorage.getItem('mm_sesiones') || '[]'); } catch { return []; }
+}
+function guardarSesion(nick, semillas) {
+  const ss = sesionesGuardadas().filter(s => s.nick !== nick);
+  ss.unshift({ nick, semillas });
+  localStorage.setItem('mm_sesiones', JSON.stringify(ss));
+}
+function eliminarSesion(nick) {
+  const ss = sesionesGuardadas().filter(s => s.nick !== nick);
+  localStorage.setItem('mm_sesiones', JSON.stringify(ss));
+}
+function mostrarSesionesGuardadas() {
+  const ss = sesionesGuardadas();
+  const el = document.getElementById('login-sesiones');
+  if (!ss.length) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div style="font-size:12px;color:#777;margin-bottom:8px;">acceso rápido</div>' +
+    ss.map(s => `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <button class="btn-sec" style="flex:1;text-align:left;" onclick="entrarRapido('${s.nick}','${s.semillas.replace(/'/g,"\\'")}')">
+          ${s.nick}@
+        </button>
+        <button class="btn-peligro" onclick="eliminarSesion('${s.nick}');mostrarSesionesGuardadas()">×</button>
+      </div>`).join('');
+}
+async function entrarRapido(nick, semillas) {
+  setEstado('verificando…');
+  try {
+    const res = await fetch(`/api/usuario/${encodeURIComponent(nick)}`);
+    if (!res.ok) { setEstado('usuario no encontrado', '#c00'); return; }
+    const datos = await res.json();
+    await _verificarFingerprint(nick, datos.clave_publica);
+    const clavePrivada = await Crypto.recuperarClavePrivada(semillas, datos.clave_publica);
+    _nick = nick; _semillas = semillas; _clavePrivada = clavePrivada;
+    sessionStorage.setItem('mm_nick', nick);
+    sessionStorage.setItem('mm_semillas', semillas);
+    mostrarApp();
+  } catch(e) {
+    setEstado(e.message || 'error al verificar', '#c00');
+  }
+}
+
+// ── Panels ──
+function mostrarPanel(id) {
+  document.getElementById('login-menu').style.display      = id === 'menu'      ? 'block' : 'none';
+  document.getElementById('panel-nuevo').style.display     = id === 'nuevo'     ? 'block' : 'none';
+  document.getElementById('panel-existente').style.display = id === 'existente' ? 'block' : 'none';
+  if (id === 'menu') mostrarSesionesGuardadas();
+}
+
+// ── Nick check ──
+function chequearNick(valor) {
+  const el = document.getElementById('nick-estado');
+  clearTimeout(_nickTimer);
+  const nick = valor.trim();
+  if (!nick) { el.textContent = ''; return; }
+  if (!/^[a-z0-9.]{2,30}$/.test(nick)) {
+    el.style.color = '#c00'; el.textContent = 'solo minúsculas, números y punto'; return;
+  }
+  el.style.color = '#999'; el.textContent = 'verificando...';
+  _nickTimer = setTimeout(async () => {
+    try {
+      const res = await fetch(`/api/nick/${encodeURIComponent(nick)}`);
+      const data = await res.json();
+      el.style.color = data.disponible ? '#2e7d32' : '#c00';
+      el.textContent = data.disponible ? '✓ disponible' : '✗ ya está en uso';
+    } catch { el.textContent = ''; }
+  }, 600);
+}
+
+// ── Semillas ──
+function generarSemillas() {
+  if (typeof PALABRAS_ES === 'undefined') { alert('Error: diccionario no cargado'); return; }
+  const sel = [];
+  for (let i = 0; i < 12; i++) sel.push(PALABRAS_ES[Math.floor(Math.random() * PALABRAS_ES.length)]);
+  _semillasGeneradas = sel.join(' ');
+  document.getElementById('semillas-display').textContent = _semillasGeneradas;
+  document.getElementById('btn-copiar').style.display = '';
+}
+function copiarSemillas() {
+  if (!_semillasGeneradas) return;
+  navigator.clipboard.writeText(_semillasGeneradas).then(() => {
+    const btn = document.getElementById('btn-copiar');
+    btn.textContent = '[ ✓ copiado ]';
+    setTimeout(() => btn.textContent = '[ copiar ]', 2000);
+  });
+}
+
+// ── Registrar ──
+async function registrar() {
+  const nick = document.getElementById('nick-nuevo').value.trim();
+  const errEl = document.getElementById('error-nuevo');
+  errEl.style.display = 'none';
+  if (!nick) { errEl.textContent = 'ingresá un nick'; errEl.style.display = 'block'; return; }
+  if (!/^[a-z0-9.]{2,30}$/.test(nick)) { errEl.textContent = 'nick inválido'; errEl.style.display = 'block'; return; }
+  if (!_semillasGeneradas) { errEl.textContent = 'primero generá tus palabras semilla'; errEl.style.display = 'block'; return; }
+  try {
+    const resNick = await fetch(`/api/nick/${encodeURIComponent(nick)}`);
+    const dataNick = await resNick.json();
+    if (!dataNick.disponible) { errEl.textContent = '✗ ese nick ya está en uso'; errEl.style.display = 'block'; return; }
+    const { clavePublicaJWK } = await Crypto.generarParRegistro(_semillasGeneradas);
+    const clavePublicaStr = Crypto.serializarClavePublica(clavePublicaJWK);
+    const res = await fetch('/api/registrar', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nick, clave_publica: clavePublicaStr })
+    });
+    if (res.ok) {
+      _clavePrivada = await Crypto.recuperarClavePrivada(_semillasGeneradas, clavePublicaStr);
+      _guardarFingerprint(nick, await _calcularFingerprint(clavePublicaStr));
+      _nick = nick; _semillas = _semillasGeneradas;
+      guardarSesion(nick, _semillasGeneradas);
+      sessionStorage.setItem('mm_nick', nick);
+      sessionStorage.setItem('mm_semillas', _semillasGeneradas);
+      mostrarApp();
+    } else {
+      const data = await res.json();
+      errEl.textContent = data.error || 'error al registrar'; errEl.style.display = 'block';
+    }
+  } catch { errEl.textContent = 'error de conexión'; errEl.style.display = 'block'; }
+}
+
+// ── Entrar ──
+async function entrar() {
+  const semillas = document.getElementById('semillas-input').value.trim();
+  const nick = document.getElementById('nick-existente').value.trim().toLowerCase();
+  const recordar = document.getElementById('chk-recordar').checked;
+  const errEl = document.getElementById('error-existente');
+  errEl.style.display = 'none';
+  if (!nick) { errEl.textContent = 'ingresá tu nick'; errEl.style.display = 'block'; return; }
+  if (semillas.split(/\s+/).filter(p => p).length !== 12) {
+    errEl.textContent = 'ingresá exactamente 12 palabras'; errEl.style.display = 'block'; return;
+  }
+  try {
+    // Verificar que el nick existe
+    const resNick = await fetch(`/api/nick/${encodeURIComponent(nick)}`);
+    const dataNick = await resNick.json();
+    if (dataNick.disponible) { errEl.textContent = 'ese nick no existe'; errEl.style.display = 'block'; return; }
+
+    const resU = await fetch(`/api/usuario/${encodeURIComponent(nick)}`);
+    if (!resU.ok) { errEl.textContent = 'error al obtener usuario'; errEl.style.display = 'block'; return; }
+    const datos = await resU.json();
+
+    // Verificar fingerprint — detecta MITM
+    await _verificarFingerprint(nick, datos.clave_publica);
+
+    let clavePrivada;
+    try {
+      clavePrivada = await Crypto.recuperarClavePrivada(semillas, datos.clave_publica);
+    } catch {
+      errEl.textContent = 'las palabras semilla no son correctas'; errEl.style.display = 'block'; return;
+    }
+    _nick = nick; _semillas = semillas; _clavePrivada = clavePrivada;
+    sessionStorage.setItem('mm_nick', nick);
+    sessionStorage.setItem('mm_semillas', semillas);
+    if (recordar) guardarSesion(nick, semillas);
+    mostrarApp();
+  } catch(e) {
+    if (e.message && e.message.startsWith('ALERTA')) {
+      errEl.textContent = e.message; errEl.style.display = 'block';
+    } else {
+      errEl.textContent = 'error de conexión'; errEl.style.display = 'block';
+    }
+  }
+}
+
+// ── Salir ──
+function salir() {
+  _nick = _semillas = _clavePrivada = null;
+  sessionStorage.removeItem('mm_nick');
+  sessionStorage.removeItem('mm_semillas');
+  document.getElementById('pantalla-app').style.display = 'none';
+  document.getElementById('pantalla-login').style.display = 'block';
+  mostrarPanel('menu');
+}
+
+// Limpiar sesión al cerrar si no marcó recordar
+window.addEventListener('beforeunload', () => {
+  if (!sesionesGuardadas().find(s => s.nick === _nick)) {
+    sessionStorage.removeItem('mm_nick');
+    sessionStorage.removeItem('mm_semillas');
+  }
+});
+
+// ── App ──
+function mostrarApp() {
+  document.getElementById('pantalla-login').style.display = 'none';
+  document.getElementById('pantalla-app').style.display = 'block';
+  document.getElementById('nick-display').innerHTML = `sesión: <strong>${_nick}@</strong>`;
+  setEstado('');
+  cargarMensajes();
+}
+
+// ── Tabs ──
+function irTab(tab) {
+  ['escribir','recibidos','enviados'].forEach((t, i) => {
+    document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none';
+    document.querySelectorAll('.tab')[i].classList.toggle('activo', t === tab);
+  });
+}
+
+// ── Editor ──
+document.getElementById('editor').addEventListener('input', function() {
+  const len = this.value.length;
+  const cc = document.getElementById('charcount');
+  cc.textContent = `${len} / 500`;
+  cc.classList.toggle('over', len > 500);
+  document.getElementById('btn-enviar').disabled = len === 0 || len > 500;
+});
+
+// ── Mensajes ──
+async function cargarMensajes() {
+  if (!_nick) return;
+  setEstado('cargando…');
+  try {
+    const res = await fetch(`/micro/api/mm/inbox/${encodeURIComponent(_nick)}`);
+    if (!res.ok) throw new Error();
+    _mensajes = await res.json();
+    await renderMensajes();
+    setEstado('');
+  } catch { setEstado('error al cargar', '#c00'); }
+}
+
+async function renderMensajes() {
+  const recibidos = _mensajes.filter(m => m.contenido_oculto === _nick && m.contenido_cifrado);
+  const enviados  = _mensajes.filter(m => m.etiqueta && m.etiqueta.startsWith(_nick + '@') && m.contenido_cifrado_propio);
+
+  async function renderLista(lista, esEnviado, contenedor) {
+    // Filtrar mensajes donde el campo cifrado ya fue borrado
+    const validos = lista.filter(m => esEnviado ? m.contenido_cifrado_propio : m.contenido_cifrado);
+    if (!validos.length) { contenedor.innerHTML = '<div class="vacio">sin mensajes</div>'; return; }
+    let html = '';
+    for (const m of validos) {
+      let texto = '[no se pudo descifrar]';
+      try {
+        const campo = esEnviado ? m.contenido_cifrado_propio : m.contenido_cifrado;
+        const destMensaje = m.etiqueta ? (m.etiqueta.split('@ ')[1] || '') : '';
+        if (campo) {
+          // si es un aviso de trueque, el texto ya está en plano
+          if (m.tipo === 'trueque') texto = campo;
+          else texto = await Crypto.descifrarMensaje(campo, _clavePrivada);
+        }
+      } catch {}
+      const remitente = m.etiqueta ? m.etiqueta.split('@')[0] : '?';
+      const dest = m.etiqueta ? (m.etiqueta.split('@ ')[1] || '') : '';
+      const quien = esEnviado
+        ? `enviado a: <span style="color:#111;font-weight:bold">${dest}@</span>`
+        : `recibido de: <span style="color:#111;font-weight:bold;cursor:pointer;text-decoration:underline" onclick="responder('${remitente}')">${remitente}@</span>`;
+      html += `<div class="mensaje">
+        <span class="mensaje-meta">${quien} · ${formatFecha(m.fecha)}</span>
+        <div class="mensaje-cuerpo">${renderTexto(texto)}</div>
+        <div class="mensaje-acciones">
+          <button onclick="borrarMensaje(${m.id},'${esEnviado ? 'propio' : 'recibido'}')">borrar</button>
+        </div>
+      </div>`;
+    }
+    contenedor.innerHTML = html;
+  }
+
+  await renderLista(recibidos, false, document.getElementById('lista-recibidos'));
+  await renderLista(enviados,  true,  document.getElementById('lista-enviados'));
+}
+
+async function enviarMensaje() {
+  const dest = document.getElementById('destinatario').value.trim().replace(/@$/,'').toLowerCase();
+  const texto = document.getElementById('editor').value.trim();
+  const btn = document.getElementById('btn-enviar');
+  if (!dest) { setEstado('ingresá el destinatario', '#c00'); return; }
+  if (!texto) return;
+  btn.disabled = true; setEstado('enviando…');
+
+  // Destino especial: trueque@ — aviso público sin cifrado
+  if (dest === 'trueque') {
+    try {
+      const res = await fetch('/micro/api/mm/enviar', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ remitente: _nick, destinatario: 'trueque', contenido_cifrado: 'trueque', contenido_plano: texto })
+      });
+      if (res.ok) {
+        document.getElementById('editor').value = '';
+        document.getElementById('charcount').textContent = '0 / 500';
+        document.getElementById('destinatario').value = '';
+        btn.disabled = true;
+        setEstado('');
+        await cargarMensajes();
+        irTab('enviados');
+      } else {
+        const data = await res.json();
+        setEstado(data.error || 'error al publicar', '#c00'); btn.disabled = false;
+      }
+    } catch { setEstado('error al publicar', '#c00'); btn.disabled = false; }
+    return;
+  }
+
+  if (!/^[a-z0-9.]{2,30}$/.test(dest)) { setEstado('nick inválido', '#c00'); btn.disabled = false; return; }
+  try {
+    const resD = await fetch(`/api/usuario/${encodeURIComponent(dest)}`);
+    if (!resD.ok) { setEstado(`el usuario "${dest}" no existe`, '#c00'); btn.disabled = false; return; }
+    const datosD = await resD.json();
+    const claveDest = Crypto.deserializarClavePublica(datosD.clave_publica);
+    const cifrado = await Crypto.cifrarMensaje(texto, claveDest);
+
+    const resP = await fetch(`/api/usuario/${encodeURIComponent(_nick)}`);
+    const datosP = await resP.json();
+    const clavePropia = Crypto.deserializarClavePublica(datosP.clave_publica);
+    const cifradoPropio = await Crypto.cifrarMensaje(texto, clavePropia);
+
+    const res = await fetch('/micro/api/mm/enviar', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ remitente: _nick, destinatario: dest, contenido_cifrado: cifrado, contenido_cifrado_propio: cifradoPropio })
+    });
+    if (res.ok) {
+      document.getElementById('editor').value = '';
+      document.getElementById('charcount').textContent = '0 / 500';
+      document.getElementById('destinatario').value = '';
+      btn.disabled = true;
+      setEstado('enviado ✓', '#2e7d32');
+      await cargarMensajes();
+    } else {
+      const data = await res.json();
+      setEstado(data.error || 'error al enviar', '#c00'); btn.disabled = false;
+    }
+  } catch { setEstado('error al enviar', '#c00'); btn.disabled = false; }
+}
+
+function responder(nick) {
+  document.getElementById('destinatario').value = nick;
+  irTab('escribir');
+  document.getElementById('editor').focus();
+}
+
+async function borrarMensaje(id, tipo) {
+  if (!confirm('¿Borrar este mensaje?')) return;
+  try {
+    const res = await fetch(`/micro/api/mm/mensaje/${id}`, {
+      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nick: _nick, tipo })
+    });
+    if (res.ok) await cargarMensajes();
+  } catch {}
+}
+
+// ── Auto-login ──
+(async function() {
+  mostrarSesionesGuardadas();
+
+  // Pre-cargar destinatario si viene desde trueque
+  const params = new URLSearchParams(window.location.search);
+  const para = params.get('para');
+
+  const nick = sessionStorage.getItem('mm_nick');
+  const semillas = sessionStorage.getItem('mm_semillas');
+  if (nick && semillas) {
+    setEstado('recuperando sesión…');
+    try {
+      const res = await fetch(`/api/usuario/${encodeURIComponent(nick)}`);
+      if (res.ok) {
+        const datos = await res.json();
+        await _verificarFingerprint(nick, datos.clave_publica);
+        _clavePrivada = await Crypto.recuperarClavePrivada(semillas, datos.clave_publica);
+        _nick = nick; _semillas = semillas;
+        mostrarApp();
+        if (para) {
+          document.getElementById('destinatario').value = para;
+          irTab('escribir');
+        }
+        return;
+      }
+    } catch(e) {
+      if (e.message && e.message.startsWith('ALERTA')) setEstado(e.message, '#c00');
+    }
+    setEstado('');
+  }
+})();
+</script>
+</body>
+</html>
