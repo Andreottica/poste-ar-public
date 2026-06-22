@@ -262,3 +262,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         console.print("\n\n  hasta la próxima.\n", style=C_DIM)
         sys.exit(0)
+        
