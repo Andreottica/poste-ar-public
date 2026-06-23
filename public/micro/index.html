@@ -153,7 +153,7 @@
   <div id="panel-nuevo" class="panel" style="display:none;">
     <h2>nuevo usuario</h2>
     <label>nick (minúsculas, números y punto)</label>
-    <input id="nick-nuevo" type="text" placeholder="tu.nick" maxlength="30" oninput="chequearNick(this.value)">
+    <input id="nick-nuevo" type="text" placeholder="tu.nick  (sin @)" maxlength="30" oninput="chequearNick(this.value)">
     <div id="nick-estado" class="nick-estado"></div>
     <label>tus 12 palabras semilla — guardalas, son tu contraseña</label>
     <div class="semillas-display" id="semillas-display">—</div>
@@ -198,7 +198,7 @@
   <div id="tab-escribir">
     <div id="form-enviar">
       <label>para (nick del destinatario)</label>
-      <input id="destinatario" type="text" placeholder="nick.destino" maxlength="30">
+      <input id="destinatario" type="text" placeholder="nick.destino  (sin @)" maxlength="30">
       <label>mensaje (máx. 500 caracteres)</label>
       <textarea id="editor" rows="4" placeholder="escribí tu mensaje"></textarea>
       <div id="charcount">0 / 500</div>
@@ -254,7 +254,7 @@ function renderTexto(raw) {
   return sanitize(raw)
     .replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
     .replace(/\*([^*]+)\*/g,'<strong>$1</strong>')
-    .replace(/_([^_]+)_/g,'<em>$1</em>');
+    .replace(/_([^_]+)_/g,'<em>$1</em>').replace(/([a-z0-9.]{2,30})@/g,'<a href="/micro?dest=$1" style="color:inherit;text-decoration:underline;cursor:pointer">$1@</a>');
 }
 function formatFecha(f) { return f ? f.slice(0,16).replace('T',' ') : ''; }
 
@@ -630,7 +630,7 @@ async function borrarMensaje(id, tipo) {
 
   // Pre-cargar destinatario si viene desde trueque
   const params = new URLSearchParams(window.location.search);
-  const para = params.get('para');
+  const para = params.get('para') || params.get('dest');
 
   const nick = sessionStorage.getItem('mm_nick');
   const semillas = sessionStorage.getItem('mm_semillas');
