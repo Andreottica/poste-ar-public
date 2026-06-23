@@ -139,7 +139,7 @@ function renderText(raw) {
     .replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
     .replace(/\*([^*]+)\*/g,'<strong>$1</strong>')
     .replace(/_([^_]+)_/g,'<em>$1</em>')
-    .replace(/#(\w+)/g,'<span class="tag">#$1</span>');
+    .replace(/#(\w+)/g,'<span class="tag">#$1</span>').replace(/([a-z0-9.]{2,30})@/g,'<a href=\"/micro?dest=$1\" style=\"color:inherit;text-decoration:underline;cursor:pointer\">$1@</a>');
 }
 function formatFecha(fecha) {
   const d = new Date(fecha.replace(' ','T') + '-03:00');
